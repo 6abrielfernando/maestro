@@ -7,6 +7,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Maestro">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/icono-180.png">
+<meta name="theme-color" content="#E0252D">
+<meta name="apple-mobile-web-app-title" content="Maestro">
 <title>Maestro · Control</title>
 <style>
   :root { color-scheme: dark; --verde: #2ecc71; --rojo: #e74c3c; --ambar: #f39c12; --azul: #3498db; --bg: #0d0d0d; --card: #171717; --line: #262626; }
@@ -92,6 +97,9 @@
   .ed .it .ti b { display: block; }
   .ed .it .ti span { color: #888; font-size: 13px; }
   .ed .it button { background: #2a2a2a; border-radius: 10px; width: 40px; height: 40px; }
+  .ed .it button.drag { touch-action: none; cursor: grab; font-size: 20px; color: #9ad; background: #23303a; }
+  .ed .it.ghost { background: #26323c; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.6); opacity: .95; pointer-events: none; }
+  .ed .it.ph { border: 2px dashed #3d6a8a; border-radius: 10px; background: transparent; }
   input[type=text], input[type=number], select, textarea { width: 100%; font: inherit; font-size: 17px; padding: 11px 12px; border-radius: 10px; border: 1px solid #333; background: #101010; color: #eee; }
   textarea { min-height: 80px; resize: vertical; }
   label.f { display: block; margin: 10px 0 4px; font-size: 13px; color: #aaa; font-weight: 700; }
@@ -100,6 +108,19 @@
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: flex-end; justify-content: center; z-index: 30; }
+  #picker { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: flex-end; justify-content: center; z-index: 40; }
+  #picker .box { width: min(640px, 100%); height: 88vh; display: flex; flex-direction: column; background: #181818; border-radius: 18px 18px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); }
+  #pkList { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .pk { display: flex; align-items: center; gap: 10px; padding: 11px 6px; border-bottom: 1px solid #262626; cursor: pointer; }
+  .pk:active { background: #222; }
+  .pk .t { flex: 1; min-width: 0; }
+  .pk .t b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pk .t span { display: block; font-size: 12px; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pk .ok { color: #2ecc71; font-weight: 800; min-width: 22px; text-align: center; }
+  input.q { width: 100%; margin: 10px 0 4px; padding: 12px 14px; border-radius: 12px; border: 1px solid #333; background: #111; color: #eee; font: inherit; font-size: 16px; }
+  .songs .s .ti small { display: block; color: #888; font-weight: 400; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pickcur { background: #111; border: 1px solid #333; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .pickcur b { display: block; } .pickcur span { color: #888; font-size: 12px; }
   #sheet .box { width: min(640px, 100%); max-height: 92vh; overflow-y: auto; background: #181818; border-radius: 18px 18px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); }
 
   /* Canciones */
@@ -158,6 +179,15 @@
   }
   #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--rojo); color: #fff; padding: 12px 18px; border-radius: 10px; font-weight: 700; display: none; z-index: 40; text-align: center; max-width: 90%; }
   #toast.ok { background: #2a2a2a; }
+  button.go { touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .marca { display: flex; flex-direction: column; line-height: 1; -webkit-user-select: none; user-select: none; }
+  .marca .mt { font-weight: 800; letter-spacing: -.02em; color: #f2ede2; }
+  .marca .by { display: flex; align-items: center; gap: 5px; margin-top: 3px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8a8478; }
+  .marca .by img { width: 14px; height: 14px; border-radius: 2px; display: block; }
+  header .marca { flex-basis: 100%; padding: 2px 2px 4px; }
+  header .marca .mt { font-size: 19px; }
+  header .marca .by { margin-top: 3px; font-size: 9px; }
+  header .marca .by img { width: 12px; height: 12px; }
 </style>
 </head>
 <body>
@@ -166,6 +196,7 @@
   En Chrome: menú ⋯ → «Solicitar sitio móvil». En Safari: aA → «Solicitar sitio web móvil».
 </div>
 <header class="noselect">
+  <div class="marca"><span class="mt">Maestro</span><span class="by">by <img src="/avi-music.png" alt="AVI"> AVI Music</span></div>
   <div class="tabs lockable">
     <button class="tab on" data-page="live">Directo</button>
     <button class="tab" data-page="edit">Guion</button>
@@ -238,7 +269,16 @@
   <!-- ===================== GUION ===================== -->
   <section class="page" id="p-edit">
     <div class="card">
-      <label class="f" for="showName" style="margin-top:0">Nombre del show</label>
+      <div id="showsBar" style="display:none">
+        <label class="f" for="showSel" style="margin-top:0">Show guardado en el reproductor</label>
+        <div class="row" style="flex-wrap:nowrap">
+          <select id="showSel" style="flex:1;min-width:0"></select>
+          <button class="btn" id="showNew" title="Show nuevo vacío">＋ Nuevo</button>
+          <button class="btn" id="showDup" title="Duplicar este show">⧉</button>
+          <button class="btn" id="showDel" title="Borrar este show">🗑</button>
+        </div>
+      </div>
+      <label class="f" for="showName">Nombre del show</label>
       <input type="text" id="showName" placeholder="Mi show">
       <div class="row" style="margin-top:12px">
         <button class="btn verde" id="addSong">+ Canción</button>
@@ -255,12 +295,19 @@
   <section class="page" id="p-songs">
     <div class="card">
       <div class="row" style="justify-content:space-between"><div class="label">Todas las canciones (reproducción libre, fuera del guion)</div><button class="btn" id="reloadSongs" style="padding:8px 12px">⟳ Recargar</button></div>
+      <input type="search" id="songsQ" class="q" placeholder="🔍 Buscar canción, carpeta o artista…" autocomplete="off">
       <div class="songs" id="songList"></div>
     </div>
   </section>
 </main>
 
 <div id="sheet"><div class="box" id="sheetBox"></div></div>
+<div id="picker"><div class="box">
+  <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b style="font-size:18px" id="pkTitle">Añadir canciones</b><button class="btn verde" id="pkClose">Listo</button></div>
+  <input type="search" id="pkQ" class="q" placeholder="🔍 Buscar por título, carpeta o artista…" autocomplete="off">
+  <div class="muted" id="pkInfo" style="margin:6px 2px"></div>
+  <div id="pkList"></div>
+</div></div>
 <div id="toast"></div>
 
 <script src="engine.js"></script>
@@ -327,15 +374,31 @@ holdButton($('lockBtn'), 700, () => { setLocked(!document.body.classList.contain
 setLocked(!!localStorage.getItem('locked'));
 
 // ====================== botón SIGUIENTE ======================
-// Toque normal; con la pantalla bloqueada hay que mantenerlo pulsado medio segundo (evita disparos accidentales)
+// Solo responde a un toque puntual: si el dedo se desliza (para desplazar la pantalla), no dispara.
+// Con la pantalla bloqueada hay que mantenerlo pulsado medio segundo, sin mover el dedo.
 (function setupGo() {
-  const b = $('goBtn'); let t0 = 0, raf = 0, fired = false;
+  const b = $('goBtn'); let t0 = 0, raf = 0, x0 = 0, y0 = 0, active = false, pid = null;
+  const MOVE = 10, TAP_MAX = 700;
   const need = () => document.body.classList.contains('locked') ? 500 : 0;
   const fill = (p) => $('goFill').style.width = (p * 100) + '%';
-  const tick = () => { const p = Math.min(1, (Date.now() - t0) / need()); fill(p); if (p >= 1) { fired = true; fill(0); cmd({ cmd: 'go' }); return; } raf = requestAnimationFrame(tick); };
-  b.addEventListener('pointerdown', (e) => { e.preventDefault(); fired = false; if (!need()) { fired = true; cmd({ cmd: 'go' }); return; } t0 = Date.now(); raf = requestAnimationFrame(tick); });
-  const end = () => { cancelAnimationFrame(raf); fill(0); };
-  b.addEventListener('pointerup', end); b.addEventListener('pointerleave', end); b.addEventListener('pointercancel', end);
+  const reset = () => { active = false; pid = null; cancelAnimationFrame(raf); fill(0); };
+  const tick = () => { if (!active) return; const p = Math.min(1, (Date.now() - t0) / need()); fill(p); if (p >= 1) { reset(); cmd({ cmd: 'go' }); return; } raf = requestAnimationFrame(tick); };
+  b.addEventListener('pointerdown', (e) => {
+    if (e.button > 0 || b.disabled) return;
+    active = true; pid = e.pointerId; t0 = Date.now(); x0 = e.clientX; y0 = e.clientY;
+    if (need()) raf = requestAnimationFrame(tick);
+  });
+  b.addEventListener('pointermove', (e) => { if (active && e.pointerId === pid && Math.hypot(e.clientX - x0, e.clientY - y0) > MOVE) reset(); });
+  b.addEventListener('pointerup', (e) => {
+    if (!active || e.pointerId !== pid) return;
+    const moved = Math.hypot(e.clientX - x0, e.clientY - y0) > MOVE, quick = Date.now() - t0 <= TAP_MAX;
+    const ok = !need() && !moved && quick;
+    reset();
+    if (ok) cmd({ cmd: 'go' });
+  });
+  b.addEventListener('pointercancel', reset);   // el navegador empezó a desplazar la pantalla
+  b.addEventListener('pointerleave', reset);
+  b.addEventListener('contextmenu', (e) => e.preventDefault());
 })();
 
 document.querySelectorAll('[data-c]').forEach((b) => b.onclick = () => cmd(b.dataset.c === 'fade' ? { cmd: 'fade', value: 3 } : { cmd: b.dataset.c }));
@@ -455,8 +518,10 @@ function renderEditor() {
   show.items.forEach((it, i) => {
     const row = document.createElement('div'); row.className = 'it' + (it.type === 'block' ? ' block' : '');
     row.innerHTML = '<span>' + icon(it) + '</span><div class="ti"><b>' + esc(itemTitle(it)) + '</b><span>' + esc(describe(it)) + '</span></div>'
-      + '<button data-a="up">↑</button><button data-a="down">↓</button><button data-a="edit">✎</button><button data-a="del">🗑</button>';
-    row.querySelectorAll('button').forEach((b) => b.onclick = () => {
+      + '<button data-a="drag" class="drag" title="Mantén pulsado y arrastra">⠿</button><button data-a="up">↑</button><button data-a="down">↓</button><button data-a="edit">✎</button><button data-a="del">🗑</button>';
+    row.dataset.i = i;
+    startDrag(row.querySelector('.drag'), row, i);
+    row.querySelectorAll('button:not(.drag)').forEach((b) => b.onclick = () => {
       const a = b.dataset.a;
       if (a === 'up' && i > 0) { [show.items[i - 1], show.items[i]] = [show.items[i], show.items[i - 1]]; saveShow(); renderEditor(); }
       if (a === 'down' && i < show.items.length - 1) { [show.items[i + 1], show.items[i]] = [show.items[i], show.items[i + 1]]; saveShow(); renderEditor(); }
@@ -468,15 +533,64 @@ function renderEditor() {
   });
 }
 
+// ---- Arrastrar y soltar: mantener pulsado el asa ⠿ y llevar la fila a su sitio ----
+function startDrag(handle, row, from) {
+  handle.addEventListener('pointerdown', (e) => {
+    if (e.button > 0) return;
+    e.preventDefault();
+    const box = $('edList');
+    let started = false, ghost = null, ph = null, offY = 0, lastY = e.clientY, scrollT = null;
+    const holdT = setTimeout(begin, e.pointerType === 'mouse' ? 0 : 180);
+    handle.setPointerCapture(e.pointerId);
+    function begin() {
+      started = true;
+      const r = row.getBoundingClientRect();
+      offY = lastY - r.top;
+      ph = document.createElement('div'); ph.className = 'it ph'; ph.style.height = r.height + 'px';
+      row.after(ph);
+      ghost = row; ghost.classList.add('ghost');
+      Object.assign(ghost.style, { position: 'fixed', left: r.left + 'px', width: r.width + 'px', top: r.top + 'px', zIndex: 50 });
+      if (navigator.vibrate) try { navigator.vibrate(15); } catch {}
+      scrollT = setInterval(autoScroll, 30);
+    }
+    function autoScroll() {
+      const m = 70, h = window.innerHeight;
+      if (lastY < m) window.scrollBy(0, -12); else if (lastY > h - m) window.scrollBy(0, 12); else return;
+      place();
+    }
+    function place() {
+      ghost.style.top = (lastY - offY) + 'px';
+      const rows = [...box.querySelectorAll('.it:not(.ghost):not(.ph)')];
+      let before = null;
+      for (const r of rows) { const b = r.getBoundingClientRect(); if (lastY < b.top + b.height / 2) { before = r; break; } }
+      if (before) { if (before.previousElementSibling !== ph) before.before(ph); } else if (box.lastElementChild !== ph) box.appendChild(ph);
+    }
+    const move = (ev) => { lastY = ev.clientY; if (started) place(); };
+    const end = () => {
+      clearTimeout(holdT); clearInterval(scrollT);
+      handle.removeEventListener('pointermove', move); handle.removeEventListener('pointerup', end); handle.removeEventListener('pointercancel', end);
+      if (!started) return;
+      // posición final = filas reales que quedan antes del hueco
+      let to = 0; for (let n = box.firstElementChild; n && n !== ph; n = n.nextElementSibling) if (!n.classList.contains('ghost') && n.dataset.i !== undefined) to++;
+      const [it] = show.items.splice(from, 1); show.items.splice(to, 0, it);
+      if (to !== from) saveShow();
+      renderEditor();
+    };
+    handle.addEventListener('pointermove', move); handle.addEventListener('pointerup', end); handle.addEventListener('pointercancel', end);
+  });
+}
+
 $('showName').addEventListener('input', () => { show.name = $('showName').value; saveShow(); });
 function addItem(it) { show.items.push(Object.assign({ id: uid(), title: '', note: '', file: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false }, it)); saveShow(); renderEditor(); openSheet(show.items.length - 1); }
-$('addSong').onclick = () => { if (!songs.length) return toast('No hay canciones en el reproductor'); addItem({ type: 'song', file: songs[0].file }); };
+$('addSong').onclick = () => { if (!songs.length) return toast('No hay canciones en el reproductor'); openPicker('add'); };
 $('addSilence').onclick = () => addItem({ type: 'silence', seconds: 10 });
 $('addBlock').onclick = () => addItem({ type: 'block', title: 'Bloque ' + (show.items.filter((i) => i.type === 'block').length + 1) });
 $('fillAll').onclick = () => {
   if (!songs.length) return toast('No hay canciones en el reproductor');
   if (show.items.length && !confirm('¿Sustituir el guion actual por todas las canciones en orden?')) return;
-  show.items = songs.map((s) => ({ id: uid(), type: 'song', file: s.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false }));
+  const base = songs.length > 300 ? songs.filter((x) => !x.file.startsWith('@')) : songs;
+  if (!base.length) return toast('Demasiadas canciones: añádelas con «+ Canción» y el buscador');
+  show.items = base.map((s) => ({ id: uid(), type: 'song', file: s.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false }));
   saveShow(); renderEditor();
 };
 
@@ -486,7 +600,7 @@ function openSheet(i) {
   const seg = (name, val, opts) => '<div class="seg" data-seg="' + name + '">' + opts.map(([v, l]) => '<button data-v="' + v + '" class="' + (String(val) === String(v) ? 'on' : '') + '">' + l + '</button>').join('') + '</div>';
   let html = '<div class="row" style="justify-content:space-between"><b style="font-size:18px">' + icon(it) + ' Editar ' + (it.type === 'song' ? 'canción' : it.type === 'silence' ? 'silencio' : 'bloque') + '</b><button class="btn" id="shClose">Cerrar</button></div>';
   if (it.type === 'song') {
-    html += '<label class="f">Canción</label><select id="fFile">' + songs.map((s) => '<option value="' + esc(s.file) + '"' + (s.file === it.file ? ' selected' : '') + '>' + esc(s.title) + '</option>').join('') + (songs.some((s) => s.file === it.file) ? '' : '<option selected value="' + esc(it.file) + '">' + esc(it.file) + ' (no encontrada)</option>') + '</select>';
+    html += '<label class="f">Canción</label><input type="hidden" id="fFile" value="' + esc(it.file) + '"><div class="pickcur" id="fFileCur"></div><button class="btn" id="fFileBtn" style="width:100%">🔍 Cambiar canción…</button>';
     html += '<label class="f">Título en pantalla (opcional)</label><input type="text" id="fTitle" value="' + esc(it.title) + '" placeholder="' + esc(titleOf(it.file)) + '">';
   } else if (it.type === 'silence') {
     html += '<label class="f">Duración del silencio (segundos)</label><input type="number" id="fSeconds" min="1" step="1" value="' + it.seconds + '">';
@@ -511,6 +625,11 @@ function openSheet(i) {
   box.querySelectorAll('[data-seg]').forEach((s) => s.querySelectorAll('button').forEach((b) => b.onclick = () => { s.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); }));
   const segVal = (n) => { const b = box.querySelector('[data-seg="' + n + '"] button.on'); return b ? b.dataset.v : null; };
   $('sheet').style.display = 'flex';
+  if ($('fFileBtn')) {
+    const paint = () => { const f = $('fFile').value, so = songs.find((x) => x.file === f); $('fFileCur').innerHTML = '<b>' + esc(so ? so.title : titleOf(f)) + '</b><span>' + esc(so ? songPlace(so) : 'No encontrada en el reproductor') + '</span>'; };
+    paint();
+    $('fFileBtn').onclick = () => openPicker('replace', (f) => { $('fFile').value = f; paint(); });
+  }
   const close = () => { $('sheet').style.display = 'none'; renderEditor(); };
   $('shClose').onclick = close;
   $('shSave').onclick = () => {
@@ -535,11 +654,81 @@ function openSheet(i) {
 }
 $('sheet').addEventListener('click', (e) => { if (e.target.id === 'sheet') { $('sheet').style.display = 'none'; renderEditor(); } });
 
+// ====================== buscador de canciones ======================
+const norm = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const songPlace = (x) => (x.folder || '') + (x.dir ? ' › ' + x.dir.replace(/\//g, ' › ') : '');
+function searchSongs(q, max) {
+  const words = norm(q).split(/\s+/).filter(Boolean);
+  const out = [];
+  for (const x of songs) {
+    if (words.length) { const hay = x._n || (x._n = norm(x.title + ' ' + (x.folder || '') + ' ' + (x.dir || '') + ' ' + x.file)); if (!words.every((w) => hay.includes(w))) continue; }
+    out.push(x); if (out.length >= max) break;
+  }
+  return out;
+}
+let pkMode = 'add', pkCb = null;
+function openPicker(mode, cb) {
+  pkMode = mode; pkCb = cb || null;
+  $('pkTitle').textContent = mode === 'add' ? 'Añadir canciones al guion' : 'Elegir canción';
+  $('pkClose').textContent = mode === 'add' ? 'Listo' : 'Cancelar';
+  $('pkQ').value = ''; $('picker').style.display = 'flex'; renderPicker();
+  setTimeout(() => $('pkQ').focus(), 50);
+}
+function renderPicker() {
+  const q = $('pkQ').value.trim(), list = searchSongs(q, 150), box = $('pkList');
+  const inShow = new Set(show.items.filter((i) => i.type === 'song').map((i) => i.file));
+  $('pkInfo').textContent = !songs.length ? 'No hay canciones en el reproductor.' : list.length ? (q ? '' : songs.length + ' canciones en el reproductor. Escribe para buscar.') + (list.length >= 150 ? ' Se muestran las primeras 150.' : '') : 'Nada coincide con «' + q + '».';
+  box.innerHTML = '';
+  for (const x of list) {
+    const row = document.createElement('div'); row.className = 'pk';
+    const d = (st.durations || {})[x.file];
+    row.innerHTML = '<span class="ok">' + (inShow.has(x.file) ? '✓' : '') + '</span><span class="t"><b></b><span></span></span><span class="muted">' + (d ? fmt(d) : '') + '</span>';
+    row.querySelector('b').textContent = x.title; row.querySelector('.t span').textContent = songPlace(x);
+    row.onclick = () => {
+      if (pkMode === 'replace') { $('picker').style.display = 'none'; if (pkCb) pkCb(x.file); return; }
+      show.items.push({ id: uid(), type: 'song', file: x.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false });
+      saveShow(); row.querySelector('.ok').textContent = '✓'; toast('«' + x.title + '» añadida al final', true);
+    };
+    box.appendChild(row);
+  }
+}
+$('pkQ').addEventListener('input', renderPicker);
+$('pkClose').onclick = () => { $('picker').style.display = 'none'; renderEditor(); };
+$('picker').addEventListener('click', (e) => { if (e.target.id === 'picker') { $('picker').style.display = 'none'; renderEditor(); } });
+
+// ====================== varios shows ======================
+let showsData = null, lastShowsVersion = null, lastActive = null;
+async function loadShows() {
+  try {
+    const r = await fetch('/api/shows', { cache: 'no-store' }); if (!r.ok) throw 0;
+    showsData = await r.json();
+  } catch { showsData = null; $('showsBar').style.display = 'none'; return; }
+  $('showsBar').style.display = '';
+  const sel = $('showSel'); sel.innerHTML = '';
+  for (const x of showsData.shows) { const o = document.createElement('option'); o.value = x.id; o.textContent = x.name + ' · ' + x.songs + (x.songs === 1 ? ' canción' : ' canciones'); if (x.id === showsData.active) o.selected = true; sel.appendChild(o); }
+  $('showDel').disabled = showsData.shows.length <= 1;
+}
+async function showsCmd(body) {
+  try { const r = await (await fetch('/api/shows', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })).json(); if (!r.ok) toast(r.error || 'No se pudo'); }
+  catch { toast('Sin conexión con el reproductor'); }
+  quietUntil = 0; await loadShows(); await loadShow();
+}
+$('showSel').onchange = () => {
+  const id = $('showSel').value;
+  if (st.status && st.status !== 'stopped' && !confirm('Está sonando música. ¿Cambiar de show? Lo que suena sigue sonando.')) { $('showSel').value = showsData.active; return; }
+  showsCmd({ action: 'activate', id });
+};
+$('showNew').onclick = () => { const n = prompt('Nombre del show nuevo:', ''); if (n !== null) showsCmd({ action: 'new', name: n.trim() || 'Show nuevo' }); };
+$('showDup').onclick = () => { const n = prompt('Nombre de la copia:', (show.name || 'Show') + ' (copia)'); if (n !== null) showsCmd({ action: 'duplicate', id: showsData && showsData.active, name: n.trim() }); };
+$('showDel').onclick = () => { if (confirm('¿Borrar el show «' + (show.name || '') + '»? No se puede deshacer. Las canciones no se tocan.')) showsCmd({ action: 'delete', id: showsData && showsData.active }); };
+
 // ====================== canciones (libre) ======================
 function renderSongs() {
   const box = $('songList'); box.innerHTML = '';
-  if (!songs.length) { box.innerHTML = '<div class="muted" style="padding:12px 0">No hay canciones en el reproductor. En el ordenador, cópialas en la carpeta «canciones»; en el móvil, añádelas desde la app. Luego pulsa ⟳ Recargar.</div>'; return; }
-  songs.forEach((s) => {
+  if (!songs.length) { box.innerHTML = '<div class="muted" style="padding:12px 0">No hay canciones en el reproductor. En el ordenador, vincula tus carpetas de música desde la ventana del reproductor; en el móvil, añádelas desde la app.</div>'; return; }
+  const q = $('songsQ').value.trim(), list = searchSongs(q, 200);
+  if (!list.length) { box.innerHTML = '<div class="muted" style="padding:12px 0">Nada coincide con «' + esc(q) + '».</div>'; return; }
+  list.forEach((s) => {
     const g = typeof show.gains[s.file] === 'number' ? Math.round(show.gains[s.file] * 100) : 100;
     const d = (st.durations || {})[s.file];
     const row = document.createElement('div'); row.className = 's' + (st.file === s.file ? ' on' : '');
@@ -550,9 +739,12 @@ function renderSongs() {
     add.onclick = () => addAsNext(s);
     minus.onclick = () => cmd({ cmd: 'gain', file: s.file, delta: -1 });
     plus.onclick = () => cmd({ cmd: 'gain', file: s.file, delta: 1 });
+    if (s.folder && (s.folder !== 'canciones' || s.dir)) row.querySelector('.ti').insertAdjacentHTML('beforeend', '<small>' + esc(songPlace(s)) + '</small>');
     box.appendChild(row);
   });
+  if (list.length >= 200) box.insertAdjacentHTML('beforeend', '<div class="muted" style="padding:10px 0">Se muestran 200. Usa el buscador para encontrar el resto.</div>');
 }
+$('songsQ').addEventListener('input', () => renderSongs());
 // Añadir una canción al guion justo como la siguiente, en caliente, sin parar lo que suena
 async function addAsNext(s) {
   const it = { id: uid(), type: 'song', file: s.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false };
@@ -587,6 +779,8 @@ function onState(s) {
   st = s;
   if (st.showVersion && st.showVersion !== knownRev && Date.now() > quietUntil && $('sheet').style.display !== 'flex') { knownRev = st.showVersion; loadShow(); }
   if (st.songsVersion !== undefined && st.songsVersion !== lastSongsVersion) { lastSongsVersion = st.songsVersion; loadSongs(); }
+  if (st.showsVersion !== undefined && st.showsVersion !== lastShowsVersion) { lastShowsVersion = st.showsVersion; loadShows(); }
+  if (st.activeShow && st.activeShow !== lastActive) { const first = lastActive === null; lastActive = st.activeShow; if (!first) { quietUntil = 0; loadShow(); } }
   const dk = Object.keys(st.durations || {}).length; if (dk !== lastDurKeys) { lastDurKeys = dk; renderCues(); }
   paintLive();
 }
@@ -609,7 +803,7 @@ async function poll() {
 setInterval(() => { $('clk').textContent = hhmm(new Date()); }, 10000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { loadSongs(); loadShow(); } });
 
-loadSongs().then(loadShow).then(connect);
+loadSongs().then(loadShow).then(loadShows).then(connect);
 </script>
 </body>
 </html>

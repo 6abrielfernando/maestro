@@ -8,14 +8,16 @@ QUÉ HACE FALTA
 - Ordenador y tableta en la MISMA red wifi (vale un router propio sin internet).
 
 PREPARAR (una vez)
-1. Copia tus canciones en la carpeta «canciones» (mp3, wav, m4a, aac, ogg, flac, aiff).
-   Se ordenan por nombre: para fijar el orden, ponles número delante:
-   01 Intro.mp3, 02 Entrada.mp3...  (el número no se muestra en la tableta).
+1. En la pantalla del reproductor, «＋ Vincular carpeta»: elige la carpeta donde ya
+   tienes tu música (con sus subcarpetas). Puedes vincular varias. No se copia nada.
+   También vale copiar canciones a la carpeta «canciones» (mp3, wav, m4a, aac, ogg, flac, aiff).
+   Para fijar el orden por nombre, ponles número delante: 01 Intro.mp3, 02 Entrada.mp3...
 
 LA PANTALLA DEL REPRODUCTOR (en el ordenador)
-- Muestra las canciones de la carpeta con su duración.
-- «📂 Abrir carpeta de canciones» abre la carpeta en el Finder / Explorador.
-- También puedes ARRASTRAR archivos de audio a esa ventana para añadirlos.
+- «Carpetas de música»: las carpetas vinculadas, cuántas canciones tiene cada una,
+  «Abrir» (Finder / Explorador) y «Quitar» (desvincula; no borra nada).
+- Buscador con todas las canciones de todas las carpetas.
+- También puedes ARRASTRAR archivos de audio a esa ventana: se copian a «canciones».
 - Si añades o quitas canciones, la lista se actualiza sola (también en los controles).
   En pleno show: copia la canción a la carpeta y, en el control, pestaña «Canciones»,
   pulsa «＋ Sig.». Entra en el guion justo detrás de la que suena, sin cortar nada.
@@ -52,23 +54,30 @@ DIRECTO
 - Volumen general: −5 −1 +1 +5 para ajustes finos (100 → 94 % con 6 toques).
   El deslizador es fino arriba: de 100 a 94 % usa una cuarta parte del recorrido.
 - Esta canción: ajuste propio de la canción que suena; se guarda para la próxima vez.
+- SIGUIENTE solo responde a un toque puntual: si deslizas el dedo para mover la pantalla, no dispara.
 - 🔓 Bloqueo (mantén pulsado): solo funcionan SIGUIENTE (manteniendo pulsado) y PÁNICO.
 
 GUION
-- Crea el show con bloques (📂), canciones (🎵) y silencios (⏸). Ordena con ↑ ↓.
+- VARIOS SHOWS: arriba eliges el show. «＋ Nuevo» crea uno vacío, ⧉ lo duplica,
+  🗑 lo borra. Se guardan en el aparato que reproduce (ordenador: carpeta «guiones»).
+- Crea el show con bloques (📂), canciones (🎵) y silencios (⏸).
+- «+ Canción» abre un buscador: escribe parte del título o de la carpeta y toca para añadir.
+- Ordena con ↑ ↓, o mantén pulsado ⠿ y arrastra la fila a su sitio.
 - En cada elemento (✎): notas para el directo y AL TERMINAR:
     ⏸ Esperar mi orden → termina y se queda listo lo siguiente; lo lanzas tú.
     ⏩ Seguir sin parar → arranca solo lo siguiente (canción o silencio).
 - En canciones: fundido de entrada y de salida, empezar en / cortar en (m:ss),
   bucle (se repite hasta pulsar SIGUIENTE: música de espera) y volumen propio.
-- Los cambios se guardan solos en el reproductor (ordenador: archivo guion.json).
+- Los cambios se guardan solos en el reproductor.
 
 CANCIONES
-- Todas las canciones para lanzar una suelta, fuera del guion, y ajustar su volumen.
+- Todas las canciones (con buscador) para lanzar una suelta, fuera del guion,
+  ajustar su volumen o meterla como siguiente con «＋ Sig.».
 
 MÓVIL O TABLETA COMO REPRODUCTOR (app Android «Maestro»)
 - Instala Maestro-Android.apk en el móvil Android que va a sonar (ver abajo).
-- Abre la app → «Reproductor» → «Añadir canciones» (se quedan guardadas).
+- Abre la app → «Reproductor» → «＋ Vincular carpeta del móvil» (Música, Descargas, SD…)
+  o «Añadir canciones» para guardarlas dentro de la app.
 - Conecta los dos aparatos a la misma wifi, o activa el punto de acceso de un móvil
   y conecta el otro a él (no hace falta internet).
 - El otro aparato (cualquier móvil, tableta o iPad) escanea el QR con la cámara y ya manda.

@@ -15,7 +15,7 @@
 (function (global) {
   const uid = () => Math.random().toString(36).slice(2, 10);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const titleOf = (file) => String(file || '').replace(/\.[^.]+$/, '').replace(/^\d+[\s._-]+/, '');
+  const titleOf = (file) => String(file || '').split('/').pop().replace(/\.[^.]+$/, '').replace(/^\d+[\s._-]+/, '');
 
   function normalize(show) {
     show = show && typeof show === 'object' ? show : {};
@@ -209,11 +209,14 @@
 
     // ---------- duraciones (para tiempos y hora de fin) ----------
     function probeDurations() {
-      for (const s of songs) {
+      // Con bibliotecas grandes solo se miden las canciones del guion (y todas si son pocas)
+      const inShow = new Set(show.items.filter((i) => i.type === 'song').map((i) => i.file));
+      const list = songs.length <= 300 ? songs : songs.filter((x) => inShow.has(x.file));
+      for (const s of list) {
         if (durations[s.file]) continue;
         const a = new Audio(); a.preload = 'metadata';
         a.addEventListener('loadedmetadata', () => { if (isFinite(a.duration)) { durations[s.file] = Math.round(a.duration * 10) / 10; push(true); } a.removeAttribute('src'); });
-        a.src = io.songUrl(s.file);
+        a.src = (io.metaUrl || io.songUrl)(s.file);
       }
     }
 
@@ -280,6 +283,7 @@
       nextIndex = nextManual && nk >= 0 ? nk : nextPlayable(cueIndex + 1);
       if (nextIndex !== nk) { try { dropPre(); preloadNext(); } catch {} }
       if (persist) { try { io.saveShow(show); } catch {} }
+      try { probeDurations(); } catch {}
       push(true);
     }
 
@@ -287,8 +291,8 @@
       try { songs = await io.listSongs(); } catch { songs = []; }
       probeDurations();
       // Si no hay guion, se crea uno con todas las canciones (cada una espera la orden)
-      if (!show.items.length && songs.length) {
-        show.items = songs.map((s) => ({ id: uid(), type: 'song', file: s.file, title: '', note: '', after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false, seconds: 5 }));
+      if (!show.items.length && songs.length && !show.rev) {
+        show.items = songs.filter((x) => !x.file.startsWith('@')).slice(0, 300).map((s) => ({ id: uid(), type: 'song', file: s.file, title: '', note: '', after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false, seconds: 5 }));
         show = normalize(show); nextIndex = nextPlayable(0); saveShow();
       }
       push(true);

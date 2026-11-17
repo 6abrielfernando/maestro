@@ -1,8 +1,8 @@
 {
  "Maestro-Windows.zip": {
-  "version": "1.1.0",
-  "size": 145646416,
-  "sha256": "8ab77b727b496ed92a61c79733a6261607aed78b96686ce733f2c58044ed3e4c",
+  "version": "1.2.0",
+  "size": 145688447,
+  "sha256": "c5fbcead39fe084bc893822fbb53790ff4e3c479d3c085a36e4e04f403886558",
   "parts": [
    "Maestro-Windows.zip.parte0",
    "Maestro-Windows.zip.parte1"
