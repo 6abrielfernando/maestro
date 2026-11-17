@@ -4,7 +4,7 @@ Lanza las canciones de tu show desde el escenario con una tableta o un móvil, p
 
 **Descarga:** [avimusica.com/maestro](https://www.avimusica.com/maestro)
 
-Este repositorio solo contiene las descargas oficiales (pestaña *Releases*):
+Este repositorio solo contiene las descargas oficiales (carpeta `descargas/`):
 
 | Sistema | Archivo |
 |---|---|
