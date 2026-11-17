@@ -232,7 +232,7 @@ function lanIPs() {
     .filter((i) => i && i.family === 'IPv4' && !i.internal).map((i) => i.address);
 }
 
-const LOG_FILE = path.join(__dirname, 'maestro-errores.log');
+const LOG_FILE = process.env.MAESTRO_LOG || path.join(__dirname, 'maestro-errores.log');
 function logError(where, e) {
   const line = `[${new Date().toISOString()}] ${where}: ${(e && (e.stack || e.message)) || e}\n`;
   try { fs.appendFileSync(LOG_FILE, line); } catch {}

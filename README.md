@@ -9,7 +9,8 @@ Este repositorio solo contiene las descargas oficiales (carpeta `descargas/`):
 | Sistema | Archivo |
 |---|---|
 | macOS (Intel y Apple Silicon) | `Maestro-Mac.zip` |
-| Windows 10/11 | `Maestro-Windows.zip` |
+| Windows 10/11 (ventana propia) | `Maestro-Windows.zip` (desde avimusica.com/maestro; en el repo va en `descargas/partes/`) |
+| Windows 10/11 (versión clásica en carpeta) | `Maestro-Windows-carpeta.zip` |
 | Android 8 o superior | `Maestro-Android.apk` |
 
 El control funciona desde el navegador de cualquier móvil, tableta o iPad, sin instalar nada.

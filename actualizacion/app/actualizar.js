@@ -9,10 +9,13 @@ const path = require('path');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 
-const ROOT = __dirname;
+const ROOT = __dirname;                                   // dónde está el programa que corre ahora
+// En la versión con ventana propia, las actualizaciones van a una carpeta del usuario
+// (el programa instalado no se toca); en la versión de carpeta, se sustituyen aquí mismo.
+const TARGET = process.env.MAESTRO_UPDATE_DIR || ROOT;
 const MANIFEST_URL = process.env.MAESTRO_UPDATE_URL ||
   'https://raw.githubusercontent.com/6abrielfernando/maestro/main/actualizacion/version.json';
-const WORK = path.join(ROOT, '.actualizacion');
+const WORK = path.join(TARGET, '.actualizacion');
 const BACKUP = path.join(WORK, 'anterior');
 const STAGE = path.join(WORK, 'nueva');
 const PENDING = path.join(WORK, 'pendiente.json');
@@ -86,13 +89,14 @@ async function install(progress = () => {}) {
 
     // 2) Copia de seguridad de la versión actual
     progress('Guardando copia de la versión actual…');
-    rmrf(BACKUP);
-    for (const [f] of files) { const cur = path.join(ROOT, f); if (fs.existsSync(cur)) copyInto(cur, path.join(BACKUP, f)); }
-    fs.writeFileSync(path.join(BACKUP, 'lista.json'), JSON.stringify(files.map(([f]) => f)));
+    rmrf(BACKUP); fs.mkdirSync(BACKUP, { recursive: true });
+    const fresh = !fs.existsSync(path.join(TARGET, 'version.txt')); // primera actualización en esta carpeta
+    for (const [f] of files) { const cur = path.join(TARGET, f); if (fs.existsSync(cur)) copyInto(cur, path.join(BACKUP, f)); }
+    fs.writeFileSync(path.join(BACKUP, 'lista.json'), JSON.stringify({ files: files.map(([f]) => f), fresh }));
 
     // 3) Sustituir
     progress('Instalando…');
-    for (const [f] of files) copyInto(path.join(STAGE, f), path.join(ROOT, f));
+    for (const [f] of files) copyInto(path.join(STAGE, f), path.join(TARGET, f));
     fs.writeFileSync(PENDING, JSON.stringify({ from: last.current, to: m.version, tries: 0 }));
     rmrf(STAGE);
     return { ok: true, from: last.current, to: m.version };
@@ -101,7 +105,7 @@ async function install(progress = () => {}) {
 
 // Al arrancar: si la versión recién instalada falla varias veces, volver a la anterior
 function logError(where, e) {
-  try { fs.appendFileSync(path.join(ROOT, 'maestro-errores.log'), `[${new Date().toISOString()}] ${where}: ${(e && (e.stack || e.message)) || e}\n`); } catch {}
+  try { fs.appendFileSync(process.env.MAESTRO_LOG || path.join(ROOT, 'maestro-errores.log'), `[${new Date().toISOString()}] ${where}: ${(e && (e.stack || e.message)) || e}\n`); } catch {}
 }
 function startupGuard() {
   if (!fs.existsSync(PENDING)) return;
@@ -109,8 +113,10 @@ function startupGuard() {
   p.tries = (p.tries || 0) + 1;
   if (p.tries > 3) {
     try {
-      const list = JSON.parse(fs.readFileSync(path.join(BACKUP, 'lista.json'), 'utf8'));
-      for (const f of list) { const b = path.join(BACKUP, f); if (fs.existsSync(b)) copyInto(b, path.join(ROOT, f)); }
+      const l = JSON.parse(fs.readFileSync(path.join(BACKUP, 'lista.json'), 'utf8'));
+      const list = Array.isArray(l) ? l : l.files;
+      if (l.fresh) { for (const f of list) rmrf(path.join(TARGET, f)); }       // se vuelve a la versión instalada
+      else for (const f of list) { const b = path.join(BACKUP, f); if (fs.existsSync(b)) copyInto(b, path.join(TARGET, f)); }
       logError('actualización', `La versión ${p.to} no arrancaba; se ha vuelto a la ${p.from}`);
       console.log(`\n  La versión ${p.to} no arrancaba. Vuelvo a la ${p.from}…\n`);
     } catch (e) { logError('volver a la versión anterior', e); }

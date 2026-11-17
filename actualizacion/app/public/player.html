@@ -55,7 +55,7 @@
   <div class="wrap">
     <div>
       <div class="card">
-        <h1>Reproductor · deja esta pestaña abierta</h1>
+        <h1 id="plHead">Reproductor · deja esta pestaña abierta</h1>
         <div id="title">—</div>
         <div id="status">Esperando órdenes del control</div>
         <div class="bar"><div id="prog"></div></div>
@@ -215,6 +215,9 @@ $('unlockBtn').onclick = () => {
   new Audio().play().catch(() => {});
   $('unlock').style.display = 'none';
 };
+// Dentro del programa Maestro (ventana propia) el sonido ya está permitido: no hace falta pulsar
+const IN_APP = /Electron/.test(navigator.userAgent);
+if (IN_APP) { $('unlockBtn').click(); document.title = 'Maestro'; $('plHead').textContent = 'Reproductor · deja esta ventana abierta'; }
 
 // ---------- carpeta de canciones ----------
 const fmtSize = (b) => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
