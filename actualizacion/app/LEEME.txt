@@ -1,0 +1,100 @@
+MAESTRO
+Lanza canciones en el ordenador desde una tableta o un móvil, por la wifi local.
+Por la red solo viajan órdenes (play, stop, fundido...). El audio suena en el ordenador.
+
+QUÉ HACE FALTA
+- Nada que instalar: Node.js ya va incluido en la carpeta «runtime». Funciona sin internet.
+  Copia la carpeta COMPLETA al ordenador (por USB, por ejemplo).
+- Ordenador y tableta en la MISMA red wifi (vale un router propio sin internet).
+
+PREPARAR (una vez)
+1. Copia tus canciones en la carpeta «canciones» (mp3, wav, m4a, aac, ogg, flac, aiff).
+   Se ordenan por nombre: para fijar el orden, ponles número delante:
+   01 Intro.mp3, 02 Entrada.mp3...  (el número no se muestra en la tableta).
+
+LA PANTALLA DEL REPRODUCTOR (en el ordenador)
+- Muestra las canciones de la carpeta con su duración.
+- «📂 Abrir carpeta de canciones» abre la carpeta en el Finder / Explorador.
+- También puedes ARRASTRAR archivos de audio a esa ventana para añadirlos.
+- Si añades o quitas canciones, la lista se actualiza sola (también en los controles).
+  En pleno show: copia la canción a la carpeta y, en el control, pestaña «Canciones»,
+  pulsa «＋ Sig.». Entra en el guion justo detrás de la que suena, sin cortar nada.
+
+VARIOS CONTROLES A LA VEZ
+- Puedes abrir el control en varios aparatos (tu tableta y el móvil del técnico, por ej.).
+  Todos ven lo mismo en tiempo real y cualquiera puede disparar.
+
+EL DÍA DEL EVENTO
+1. Mac: doble clic en «Iniciar Maestro (Mac).command»
+   (la primera vez macOS puede bloquearlo: clic derecho → Abrir → Abrir).
+   Windows: doble clic en «Iniciar Maestro (Windows).bat»
+   (si el Firewall pregunta, pulsa «Permitir» en redes privadas).
+2. Se abre el navegador con el REPRODUCTOR. Pulsa «Activar audio» y deja esa pestaña abierta.
+3. En la tableta, abre el control de una de estas formas:
+   - Escanea con la cámara el código QR que sale en la pantalla del reproductor.
+   - O escribe en el navegador:  maestro.local:8080
+     (funciona en iPad/iPhone y en la mayoría de equipos; si no, usa la de números
+      tipo 192.168.1.50:8080 que también aparece en pantalla).
+   Truco: en el iPad, Compartir → «Añadir a pantalla de inicio» para tenerlo a
+   pantalla completa como una app.
+   Si usas dos ordenadores con este programa en la misma red, cambia el nombre de uno:
+   NOMBRE=maestro2 (ver AJUSTES).
+
+EL CONTROL (tableta o móvil): tres pestañas
+DIRECTO
+- Botón grande ▶ SIGUIENTE: dispara lo que toca según el guion. Es lo único que hay que pulsar.
+- Arriba: hora, tiempo de show y hora prevista de fin.
+- Lo que suena: título, tiempo que queda (en rojo los últimos 10 s) y las notas del guion.
+  En espera: cuenta el tiempo entre canción y canción.
+- Siguiente: qué viene y si al terminar espera tu orden (⏸) o sigue sin parar (⏩).
+- Atrás / Saltar (mueven el «siguiente» sin sonar), Pausa, Fundido y PÁNICO (para todo con fundido).
+- Lista del guion: tócala para elegir qué es lo siguiente; ▶ lo dispara al momento.
+- Volumen general: −5 −1 +1 +5 para ajustes finos (100 → 94 % con 6 toques).
+  El deslizador es fino arriba: de 100 a 94 % usa una cuarta parte del recorrido.
+- Esta canción: ajuste propio de la canción que suena; se guarda para la próxima vez.
+- 🔓 Bloqueo (mantén pulsado): solo funcionan SIGUIENTE (manteniendo pulsado) y PÁNICO.
+
+GUION
+- Crea el show con bloques (📂), canciones (🎵) y silencios (⏸). Ordena con ↑ ↓.
+- En cada elemento (✎): notas para el directo y AL TERMINAR:
+    ⏸ Esperar mi orden → termina y se queda listo lo siguiente; lo lanzas tú.
+    ⏩ Seguir sin parar → arranca solo lo siguiente (canción o silencio).
+- En canciones: fundido de entrada y de salida, empezar en / cortar en (m:ss),
+  bucle (se repite hasta pulsar SIGUIENTE: música de espera) y volumen propio.
+- Los cambios se guardan solos en el reproductor (ordenador: archivo guion.json).
+
+CANCIONES
+- Todas las canciones para lanzar una suelta, fuera del guion, y ajustar su volumen.
+
+MÓVIL O TABLETA COMO REPRODUCTOR (app Android «Maestro»)
+- Instala Maestro-Android.apk en el móvil Android que va a sonar (ver abajo).
+- Abre la app → «Reproductor» → «Añadir canciones» (se quedan guardadas).
+- Conecta los dos aparatos a la misma wifi, o activa el punto de acceso de un móvil
+  y conecta el otro a él (no hace falta internet).
+- El otro aparato (cualquier móvil, tableta o iPad) escanea el QR con la cámara y ya manda.
+  También puede usar la misma app en modo «Control».
+- Botón «Modo concierto»: silencia llamadas y notificaciones; la música sigue sonando.
+  La primera vez Android pide permiso: activa «Maestro» en la lista y vuelve.
+  Para bloquear del todo las llamadas: modo avión y vuelve a encender solo la wifi.
+- Mientras está en «Reproductor» la pantalla no se apaga. No bloquees el móvil.
+Instalar el APK: pásalo al móvil (WhatsApp, USB, Drive…), ábrelo y acepta
+«Permitir instalar apps de esta fuente». No está en Google Play.
+
+ACTUALIZACIONES
+- Con internet, Maestro busca versiones nuevas al abrirse. Aviso en el reproductor.
+- Pulsa «Actualizar ahora». Descarga, comprueba y se reinicia solo en segundos.
+- Solo se actualiza con la música parada. Canciones y guion no se tocan.
+- Si la versión nueva fallara al arrancar, vuelve sola a la anterior.
+- Sin internet no pasa nada: sigue funcionando igual.
+- App Android: aviso en la pantalla de inicio. Descarga el APK e instálalo encima.
+
+CONSEJOS PARA EL DIRECTO
+- Desactiva el reposo del ordenador y las notificaciones (modo No molestar).
+- Conecta el ordenador al router por cable si puedes.
+- Ten un plan B: alguien junto al ordenador o un teclado inalámbrico.
+
+AJUSTES (opcionales)
+- Otro puerto:   PORT=9000 node server.js
+- Otra carpeta:  SONGS_DIR="/ruta/a/mis/canciones" node server.js
+- Otro nombre:   NOMBRE=maestro2 node server.js   → maestro2.local
+- Duración del fundido: en public/control.html, cambia FADE_SECONDS = 3

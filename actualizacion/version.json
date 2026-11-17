@@ -1,0 +1,19 @@
+{
+ "version": "1.0.5",
+ "notas": "Actualizaciones automáticas desde el reproductor",
+ "files": {
+  "server.js": "330e842419a17a74a3c20d8f8011938e2706244aa7da8f9c61121e258ca31724",
+  "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
+  "actualizar.js": "cdea0fe19f5de17de61e8ee62d3a324f86c1ce480d023d3ae04d1fa3d299f006",
+  "version.txt": "8c54bfab7f1ae9bd1a7148eae41e7b0a8f4ad3726e0cac70f823a2d45db9e60c",
+  "LEEME.txt": "3697551dd8f9173c155f26b5a0a6df5720ebfae5f089da264a99fcca2a13ac4b",
+  "public/control.html": "ce771526e06532eabccd3540d24e16b793a75f2c82fbfa6e75a11d1bb11285b8",
+  "public/engine.js": "e39823551a4c952cb8277c8cb4818c17c10f875cbe827f0c654e322c97c2365d",
+  "public/player.html": "f9e27272f5c5352fdad53dec92c434a6980b2173e33a375ddc55262d55b87b18",
+  "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780"
+ },
+ "apk": {
+  "version": "1.0.5",
+  "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
+ }
+}

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" id="vp" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Maestro">
+<title>Maestro · Control</title>
+<style>
+  :root { color-scheme: dark; --verde: #2ecc71; --rojo: #e74c3c; --ambar: #f39c12; --azul: #3498db; --bg: #0d0d0d; --card: #171717; --line: #262626; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: #eee; font: 16px/1.3 -apple-system, "Segoe UI", Roboto, sans-serif; overscroll-behavior: none; }
+  body { display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
+  button { font: inherit; color: inherit; cursor: pointer; border: 0; }
+  .noselect, button { user-select: none; -webkit-user-select: none; }
+
+  /* Cabecera */
+  header { position: sticky; top: 0; z-index: 10; background: #141414; border-bottom: 1px solid var(--line); padding: calc(6px + env(safe-area-inset-top)) 10px 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .tabs { display: flex; gap: 4px; }
+  .tab { padding: 9px 14px; border-radius: 10px; background: transparent; color: #aaa; font-weight: 700; }
+  .tab.on { background: #2a2a2a; color: #fff; }
+  .clock { margin-left: auto; display: flex; gap: 12px; font-size: 13px; color: #aaa; font-variant-numeric: tabular-nums; align-items: center; flex-wrap: wrap; }
+  .clock b { color: #eee; font-size: 15px; }
+  #conn { font-size: 13px; } #conn.ok { color: var(--verde); } #conn.ko { color: var(--rojo); } #conn.warn { color: var(--ambar); }
+  #lockBtn { background: #2a2a2a; border-radius: 10px; padding: 8px 10px; font-size: 14px; }
+  body.locked #lockBtn { background: var(--ambar); color: #111; font-weight: 700; }
+
+  main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .page { display: none; padding: 12px; }
+  .page.on { display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+  .muted { color: #8a8a8a; font-size: 13px; }
+  .btn { border-radius: 12px; padding: 12px 14px; font-weight: 700; background: #2c2c2c; }
+  .btn.verde { background: var(--verde); color: #111; } .btn.rojo { background: var(--rojo); color: #fff; } .btn.ambar { background: var(--ambar); color: #111; } .btn.azul { background: var(--azul); color: #fff; }
+  .btn:active, .go:active { filter: brightness(.8); }
+  .btn:disabled { opacity: .35; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  /* Directo */
+  .live { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 900px) { .live { grid-template-columns: 1.35fr 1fr; } }
+  .label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #888; font-weight: 700; }
+  #nowTitle { font-size: 28px; font-weight: 800; margin: 4px 0; }
+  #nowNote, #nextNote { white-space: pre-wrap; font-size: 17px; color: #ddd; background: #101010; border-radius: 10px; padding: 8px 10px; margin-top: 6px; }
+  #nowNote:empty, #nextNote:empty { display: none; }
+  .bigtime { font-size: 64px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; margin-top: 8px; }
+  .bigtime.alerta { color: var(--rojo); }
+  .bigtime.espera { color: var(--ambar); }
+  .prog { margin-top: 10px; height: 10px; background: #2a2a2a; border-radius: 5px; overflow: hidden; }
+  .prog > div { height: 100%; width: 0; background: var(--verde); }
+  .times { display: flex; justify-content: space-between; font-size: 13px; color: #999; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 99px; background: #2a2a2a; color: #ccc; vertical-align: middle; }
+  .badge:empty { display: none; }
+  .badge.sigue { background: #10304a; color: #7cc4ff; } .badge.espera { background: #3a2a10; color: #ffc46b; }
+  #nextTitle { font-size: 20px; font-weight: 700; margin-top: 4px; }
+
+  .go { position: relative; overflow: hidden; width: 100%; min-height: 120px; border-radius: 20px; background: var(--verde); color: #0b0b0b; font-size: 30px; font-weight: 900; margin-bottom: 12px; }
+  .go small { display: block; font-size: 15px; font-weight: 700; opacity: .7; margin-top: 4px; }
+  .go:disabled { background: #2a2a2a; color: #777; }
+  .go .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(0,0,0,.18); }
+  .transport { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+  .transport .btn { min-height: 66px; font-size: 15px; padding: 6px; }
+  .transport .btn small { display: block; font-size: 11px; opacity: .75; font-weight: 600; }
+
+  .vol { display: grid; grid-template-columns: auto 1fr; gap: 10px 12px; align-items: center; }
+  .vol .val { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+  .steps { display: flex; gap: 6px; }
+  .steps .btn { padding: 10px 0; width: 54px; }
+  input[type=range] { width: 100%; height: 44px; accent-color: var(--verde); }
+
+  .cues .cue { display: flex; align-items: center; gap: 8px; padding: 10px 8px; border-radius: 12px; border: 2px solid transparent; margin-bottom: 4px; background: #141414; }
+  .cue .n { width: 24px; text-align: right; color: #777; font-size: 13px; }
+  .cue .ic { width: 22px; text-align: center; }
+  .cue .ti { flex: 1; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cue .ln { color: #888; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .cue.block { background: transparent; color: #aaa; text-transform: uppercase; font-size: 13px; letter-spacing: .08em; padding-top: 14px; }
+  .cue.block .ti { font-weight: 800; }
+  .cue.now { background: #12301f; border-color: var(--verde); }
+  .cue.next { border-color: var(--ambar); }
+  .cue .fireBtn { background: #2a2a2a; border-radius: 10px; width: 40px; height: 36px; }
+  .tag { font-size: 11px; font-weight: 800; color: var(--ambar); }
+
+  body.locked .lockable { opacity: .3; pointer-events: none; }
+
+  /* Guion (editor) */
+  .ed .it { display: flex; align-items: center; gap: 8px; padding: 10px; border-bottom: 1px solid #222; }
+  .ed .it.block { background: #1d1d1d; border-radius: 10px; margin-top: 8px; }
+  .ed .it .ti { flex: 1; min-width: 0; }
+  .ed .it .ti b { display: block; }
+  .ed .it .ti span { color: #888; font-size: 13px; }
+  .ed .it button { background: #2a2a2a; border-radius: 10px; width: 40px; height: 40px; }
+  input[type=text], input[type=number], select, textarea { width: 100%; font: inherit; font-size: 17px; padding: 11px 12px; border-radius: 10px; border: 1px solid #333; background: #101010; color: #eee; }
+  textarea { min-height: 80px; resize: vertical; }
+  label.f { display: block; margin: 10px 0 4px; font-size: 13px; color: #aaa; font-weight: 700; }
+  .seg { display: flex; gap: 6px; } .seg button { flex: 1; padding: 12px; border-radius: 10px; background: #2a2a2a; font-weight: 700; }
+  .seg button.on { background: var(--azul); color: #fff; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: flex-end; justify-content: center; z-index: 30; }
+  #sheet .box { width: min(640px, 100%); max-height: 92vh; overflow-y: auto; background: #181818; border-radius: 18px 18px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); }
+
+  /* Canciones */
+  .songs .s { display: flex; align-items: center; gap: 10px; padding: 10px 6px; border-bottom: 1px solid #222; }
+  .songs .s .ti { flex: 1; font-weight: 600; }
+  .songs .s .g { font-variant-numeric: tabular-nums; color: #aaa; width: 48px; text-align: right; }
+  .songs .s button { background: #2a2a2a; border-radius: 10px; min-width: 42px; height: 40px; }
+  .songs .s button.sig { background: #1f3a26; color: #8fe0a4; padding: 0 8px; white-space: nowrap; }
+  .songs .s .nuevo { color: #f0a050; }
+  .songs .s .g { white-space: nowrap; }
+  @media (max-width: 520px) {
+    .songs .s { flex-wrap: wrap; gap: 8px; }
+    .songs .s .ti { flex: 1 1 100%; order: -1; }
+    .songs .s button.sig { flex: 1; }
+  }
+  .songs .s.on .ti { color: var(--verde); }
+
+  /* ===== Pantallas estrechas (móviles pequeños o con letra grande) ===== */
+  .live > * { min-width: 0; }
+  .card { min-width: 0; overflow-wrap: anywhere; }
+  .steps .btn { flex: 1; width: auto; min-width: 0; }
+  #nowTitle { overflow-wrap: anywhere; }
+  .bigtime { font-size: clamp(44px, 16vw, 64px); }
+  @media (max-width: 520px) {
+    header { padding-left: 8px; padding-right: 8px; gap: 6px; }
+    .tabs { width: 100%; }
+    .tab { flex: 1; padding: 9px 4px; font-size: 15px; }
+    .clock { margin-left: 0; width: 100%; justify-content: space-between; gap: 6px; font-size: 12px; }
+    .clock b { font-size: 14px; }
+    .page { padding: 8px; }
+    .card { padding: 12px; border-radius: 14px; }
+    #nowTitle { font-size: 22px; }
+    #nextTitle { font-size: 18px; }
+    .go { min-height: 96px; font-size: 26px; }
+    .transport { grid-template-columns: repeat(3, 1fr); }
+    .transport .btn { min-height: 58px; }
+    .transport [data-c="fade"] { grid-column: span 1; }
+    .transport [data-c="panic"] { grid-column: span 2; font-size: 18px; }
+    .vol { grid-template-columns: 1fr; gap: 6px; }
+    .vol .val { text-align: left; display: inline-block; margin-left: 8px; min-width: 0; }
+    .vol > div:nth-child(odd) { display: flex; align-items: baseline; }
+    .cue { padding: 9px 6px; gap: 6px; }
+    .cue .fireBtn { width: 36px; }
+    .ed .it { padding: 8px 4px; gap: 6px; flex-wrap: wrap; }
+    .ed .it .ti { flex-basis: calc(100% - 40px); }
+    .ed .it button { width: 38px; height: 38px; }
+    .grid2 { grid-template-columns: 1fr; gap: 0; }
+    .seg button { padding: 11px 6px; font-size: 15px; }
+    #sheet .box { padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
+  }
+  @media (max-width: 360px) {
+    .tab { font-size: 14px; }
+    .clock span:nth-child(2) { display: none; } /* oculta "Show" en los más pequeños; se ve el reloj y la hora de fin */
+    .go { font-size: 23px; }
+    .transport .btn { font-size: 13px; }
+  }
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--rojo); color: #fff; padding: 12px 18px; border-radius: 10px; font-weight: 700; display: none; z-index: 40; text-align: center; max-width: 90%; }
+  #toast.ok { background: #2a2a2a; }
+</style>
+</head>
+<body>
+<div id="deskWarn" style="display:none;background:#f39c12;color:#111;font-weight:700;padding:10px 12px;font-size:15px">
+  El navegador está mostrando la «versión de escritorio» y el control se ve pequeño o cortado.
+  En Chrome: menú ⋯ → «Solicitar sitio móvil». En Safari: aA → «Solicitar sitio web móvil».
+</div>
+<header class="noselect">
+  <div class="tabs lockable">
+    <button class="tab on" data-page="live">Directo</button>
+    <button class="tab" data-page="edit">Guion</button>
+    <button class="tab" data-page="songs">Canciones</button>
+  </div>
+  <div class="clock">
+    <span>🕐 <b id="clk">--:--</b></span>
+    <span>Show <b id="elapsed">0:00</b></span>
+    <span>Fin prev. <b id="eta">--:--</b></span>
+    <span id="conn" class="ko">● Conectando…</span>
+    <button id="lockBtn" title="Mantén pulsado para bloquear o desbloquear">🔓</button>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== DIRECTO ===================== -->
+  <section class="page on" id="p-live">
+    <div class="live">
+      <div>
+        <div class="card">
+          <div class="label" id="nowLabel">En espera</div>
+          <div id="nowTitle">—</div>
+          <div class="bigtime espera" id="bigTime">0:00</div>
+          <div class="prog"><div id="prog"></div></div>
+          <div class="times"><span id="posTxt"></span><span id="durTxt"></span></div>
+          <div id="nowNote"></div>
+        </div>
+
+        <div class="card">
+          <div class="label">Siguiente <span id="nextBadge" class="badge"></span></div>
+          <div id="nextTitle">—</div>
+          <div id="nextNote"></div>
+        </div>
+
+        <button class="go" id="goBtn"><span class="fill" id="goFill"></span><span id="goTxt">▶ SIGUIENTE</span><small id="goSub"></small></button>
+
+        <div class="transport">
+          <button class="btn lockable" data-c="back">⏮<small>Atrás</small></button>
+          <button class="btn lockable" data-c="skip">⏭<small>Saltar</small></button>
+          <button class="btn lockable" data-c="toggle">❚❚/▶<small>Pausa</small></button>
+          <button class="btn ambar lockable" data-c="fade">⤵<small>Fundido</small></button>
+          <button class="btn rojo" data-c="panic">■<small>PÁNICO</small></button>
+        </div>
+
+        <div class="card vol lockable">
+          <div><div class="label">Volumen general</div><div class="val" id="volVal">100%</div></div>
+          <div>
+            <input type="range" id="volSlider" min="0" max="1000" value="1000">
+            <div class="steps"><button class="btn" data-v="-5">−5</button><button class="btn" data-v="-1">−1</button><button class="btn" data-v="1">+1</button><button class="btn" data-v="5">+5</button></div>
+          </div>
+          <div><div class="label">Esta canción</div><div class="val" id="gainVal">—</div></div>
+          <div>
+            <div class="muted" style="margin-bottom:6px">Ajuste propio de la canción que suena. Se guarda para la próxima vez.</div>
+            <div class="steps"><button class="btn" data-g="-5">−5</button><button class="btn" data-g="-1">−1</button><button class="btn" data-g="1">+1</button><button class="btn" data-g="5">+5</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:6px">
+          <div class="label" id="showNameLbl">Guion</div>
+          <button class="btn lockable" id="restartBtn" style="padding:8px 12px">⟲ Al inicio</button>
+        </div>
+        <div class="muted" style="margin-bottom:8px">Toca un elemento para que sea el siguiente. ▶ lo dispara ya.</div>
+        <div class="cues" id="cueList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GUION ===================== -->
+  <section class="page" id="p-edit">
+    <div class="card">
+      <label class="f" for="showName" style="margin-top:0">Nombre del show</label>
+      <input type="text" id="showName" placeholder="Mi show">
+      <div class="row" style="margin-top:12px">
+        <button class="btn verde" id="addSong">+ Canción</button>
+        <button class="btn azul" id="addSilence">+ Silencio</button>
+        <button class="btn" id="addBlock">+ Bloque</button>
+        <button class="btn" id="fillAll">Crear con todas las canciones</button>
+      </div>
+      <div class="muted" style="margin-top:8px">Los cambios se guardan solos en el reproductor. Toca ✎ para editar: notas del guion, si al terminar espera tu orden o sigue sin parar, fundidos, corte y bucle.</div>
+    </div>
+    <div class="card ed" id="edList"></div>
+  </section>
+
+  <!-- ===================== CANCIONES ===================== -->
+  <section class="page" id="p-songs">
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><div class="label">Todas las canciones (reproducción libre, fuera del guion)</div><button class="btn" id="reloadSongs" style="padding:8px 12px">⟳ Recargar</button></div>
+      <div class="songs" id="songList"></div>
+    </div>
+  </section>
+</main>
+
+<div id="sheet"><div class="box" id="sheetBox"></div></div>
+<div id="toast"></div>
+
+<script src="engine.js"></script>
+<script>
+// ====================== ajuste a la pantalla ======================
+// Si el navegador del móvil está en «versión de escritorio», la página se dibuja mucho más ancha que la pantalla.
+(function fitScreen() {
+  const check = () => {
+    const sw = Math.min(screen.width, screen.height) || 0;
+    const narrowDevice = sw > 0 && sw < 600 && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    const tooWide = narrowDevice && document.documentElement.clientWidth > sw * 1.3;
+    if (tooWide) {
+      document.getElementById('vp').setAttribute('content', 'width=' + Math.round(window.matchMedia('(orientation: landscape)').matches ? Math.max(screen.width, screen.height) : sw) + ', initial-scale=1, viewport-fit=cover');
+      document.getElementById('deskWarn').style.display = document.documentElement.clientWidth > sw * 1.3 ? 'block' : 'none';
+    }
+  };
+  check(); setTimeout(check, 400); window.addEventListener('orientationchange', () => setTimeout(check, 400));
+})();
+
+// ====================== utilidades ======================
+const $ = (id) => document.getElementById(id);
+const fmt = (s) => { s = Math.max(0, Math.round(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const hhmm = (d) => d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+const parseTime = (t) => { t = String(t || '').trim(); if (!t) return 0; if (t.includes(':')) { const [m, s] = t.split(':'); return (Number(m) || 0) * 60 + (Number(s) || 0); } return Number(t) || 0; };
+const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const titleOf = EscenarioEngine.titleOf;
+// Curva del deslizador: arriba mueve muy poco (ajuste fino), abajo baja más rápido
+const posToVol = (x) => 1 - Math.pow(1 - x, 2);
+const volToPos = (v) => 1 - Math.sqrt(Math.max(0, 1 - v));
+
+function toast(msg, ok) { const t = $('toast'); t.textContent = msg; t.className = ok ? 'ok' : ''; t.style.display = 'block'; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = 'none', 2500); }
+
+let st = {};            // estado que manda el reproductor
+let show = EscenarioEngine.normalize(null);
+let knownRev = null;
+let songs = [];
+
+async function cmd(body) {
+  try {
+    const r = await fetch('/api/cmd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json(); if (!j.ok) toast(j.error || 'No se pudo enviar');
+  } catch { toast('Sin conexión con el reproductor'); }
+}
+
+// ====================== pestañas ======================
+document.querySelectorAll('.tab').forEach((t) => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('on', x === t));
+  document.querySelectorAll('.page').forEach((p) => p.classList.toggle('on', p.id === 'p-' + t.dataset.page));
+  if (t.dataset.page === 'edit') renderEditor();
+  if (t.dataset.page === 'songs') renderSongs();
+});
+
+// ====================== bloqueo (mantener pulsado) ======================
+function holdButton(el, ms, onDone, onProgress) {
+  let t0 = 0, raf = 0, done = false;
+  const tick = () => { const p = Math.min(1, (Date.now() - t0) / ms); onProgress && onProgress(p); if (p >= 1) { done = true; onDone(); onProgress && onProgress(0); return; } raf = requestAnimationFrame(tick); };
+  const start = (e) => { e.preventDefault(); done = false; t0 = Date.now(); raf = requestAnimationFrame(tick); };
+  const end = () => { cancelAnimationFrame(raf); if (!done) onProgress && onProgress(0); };
+  el.addEventListener('pointerdown', start); el.addEventListener('pointerup', end); el.addEventListener('pointerleave', end); el.addEventListener('pointercancel', end);
+}
+function setLocked(on) { document.body.classList.toggle('locked', on); $('lockBtn').textContent = on ? '🔒 Bloqueado' : '🔓'; localStorage.setItem('locked', on ? '1' : ''); }
+holdButton($('lockBtn'), 700, () => { setLocked(!document.body.classList.contains('locked')); toast(document.body.classList.contains('locked') ? 'Bloqueado: solo SIGUIENTE y PÁNICO' : 'Desbloqueado', true); });
+setLocked(!!localStorage.getItem('locked'));
+
+// ====================== botón SIGUIENTE ======================
+// Toque normal; con la pantalla bloqueada hay que mantenerlo pulsado medio segundo (evita disparos accidentales)
+(function setupGo() {
+  const b = $('goBtn'); let t0 = 0, raf = 0, fired = false;
+  const need = () => document.body.classList.contains('locked') ? 500 : 0;
+  const fill = (p) => $('goFill').style.width = (p * 100) + '%';
+  const tick = () => { const p = Math.min(1, (Date.now() - t0) / need()); fill(p); if (p >= 1) { fired = true; fill(0); cmd({ cmd: 'go' }); return; } raf = requestAnimationFrame(tick); };
+  b.addEventListener('pointerdown', (e) => { e.preventDefault(); fired = false; if (!need()) { fired = true; cmd({ cmd: 'go' }); return; } t0 = Date.now(); raf = requestAnimationFrame(tick); });
+  const end = () => { cancelAnimationFrame(raf); fill(0); };
+  b.addEventListener('pointerup', end); b.addEventListener('pointerleave', end); b.addEventListener('pointercancel', end);
+})();
+
+document.querySelectorAll('[data-c]').forEach((b) => b.onclick = () => cmd(b.dataset.c === 'fade' ? { cmd: 'fade', value: 3 } : { cmd: b.dataset.c }));
+$('restartBtn').onclick = () => { if (confirm('¿Volver al inicio del guion? Se para lo que suena.')) cmd({ cmd: 'restart' }); };
+
+// ====================== volumen ======================
+let volDrag = false, volSendT = 0;
+$('volSlider').addEventListener('input', () => {
+  volDrag = true; const v = Math.round(posToVol($('volSlider').value / 1000) * 100) / 100;
+  $('volVal').textContent = Math.round(v * 100) + '%';
+  const now = Date.now(); if (now - volSendT > 70) { volSendT = now; cmd({ cmd: 'volume', value: v }); }
+});
+$('volSlider').addEventListener('change', () => { const v = Math.round(posToVol($('volSlider').value / 1000) * 100) / 100; cmd({ cmd: 'volume', value: v }); setTimeout(() => volDrag = false, 600); });
+document.querySelectorAll('[data-v]').forEach((b) => b.onclick = () => cmd({ cmd: 'volstep', value: Number(b.dataset.v) }));
+document.querySelectorAll('[data-g]').forEach((b) => b.onclick = () => { if (!st.file) return toast('No suena ninguna canción'); cmd({ cmd: 'gain', file: st.file, delta: Number(b.dataset.g) }); });
+
+// ====================== pintar Directo ======================
+const icon = (it) => it.type === 'song' ? '🎵' : it.type === 'silence' ? '⏸' : '📂';
+const itemTitle = (it) => it.type === 'silence' ? (it.title || 'Silencio ' + it.seconds + ' s') : (it.title || titleOf(it.file) || 'Bloque');
+function itemLen(it) {
+  if (it.type === 'silence') return it.seconds;
+  if (it.type !== 'song') return 0;
+  const d = (st.durations || {})[it.file] || 0;
+  return Math.max(0, (it.endAt > 0 ? Math.min(it.endAt, d || it.endAt) : d) - (it.startAt || 0));
+}
+
+function paintLive() {
+  const labels = { stopped: 'En espera', paused: 'En pausa', playing: st.mode === 'libre' ? 'Sonando (libre)' : 'Sonando', fading: 'Fundido de salida', silence: 'Silencio' };
+  $('nowLabel').textContent = labels[st.status] || 'En espera';
+  const idle = !st.status || st.status === 'stopped';
+  $('nowTitle').textContent = idle ? (st.nextTitle ? 'Listo para: ' + st.nextTitle : 'Fin del guion') : (st.title || '—');
+  const big = $('bigTime');
+  if (idle) { big.textContent = fmt(st.standbyElapsed); big.className = 'bigtime espera'; }
+  else { big.textContent = '−' + fmt(st.remaining); big.className = 'bigtime' + (st.remaining <= 10 ? ' alerta' : ''); }
+  $('prog').style.width = !idle && st.duration ? Math.min(100, 100 * st.position / st.duration) + '%' : '0';
+  $('posTxt').textContent = idle ? 'tiempo en espera' : fmt(st.position);
+  $('durTxt').textContent = idle ? '' : fmt(st.duration) + (st.after === 'continue' ? '  · al terminar sigue ⏩' : st.mode === 'guion' ? '  · al terminar espera ⏸' : '');
+  $('nowNote').textContent = idle ? '' : (st.note || '');
+  $('nextTitle').textContent = st.nextTitle || 'Fin del guion';
+  $('nextNote').textContent = st.nextNote || '';
+  const nb = $('nextBadge');
+  nb.textContent = st.nextTitle ? (st.nextAfter === 'continue' ? 'al terminar sigue ⏩' : 'al terminar espera ⏸') : '';
+  nb.className = 'badge ' + (st.nextAfter === 'continue' ? 'sigue' : 'espera');
+  $('goBtn').disabled = !st.nextTitle;
+  $('goTxt').textContent = st.nextTitle ? '▶ SIGUIENTE' : 'FIN DEL GUION';
+  $('goSub').textContent = st.nextTitle ? st.nextTitle + (document.body.classList.contains('locked') ? ' · mantén pulsado' : '') : '';
+  if (!volDrag && typeof st.volume === 'number') { $('volSlider').value = Math.round(volToPos(st.volume) * 1000); $('volVal').textContent = Math.round(st.volume * 100) + '%'; }
+  $('gainVal').textContent = typeof st.gain === 'number' ? Math.round(st.gain * 100) + '%' : '—';
+  // reloj
+  const now = new Date();
+  $('clk').textContent = hhmm(now);
+  $('elapsed').textContent = fmt(st.showElapsed);
+  $('eta').textContent = st.estRemaining > 0 ? hhmm(new Date(now.getTime() + st.estRemaining * 1000)) : '--:--';
+  const c = $('conn');
+  if (st.players === 0) { c.className = 'warn'; c.textContent = '● Reproductor no abierto'; } else if (st.players > 0) { c.className = 'ok'; c.textContent = '● Conectado'; }
+  paintCueMarks();
+}
+
+function renderCues() {
+  const box = $('cueList'); box.innerHTML = '';
+  $('showNameLbl').textContent = show.name || 'Guion';
+  if (!show.items.length) { box.innerHTML = '<div class="muted">El guion está vacío. Ve a la pestaña «Guion» para crearlo.</div>'; return; }
+  let n = 0;
+  show.items.forEach((it, i) => {
+    const row = document.createElement('div');
+    row.className = 'cue' + (it.type === 'block' ? ' block' : ''); row.dataset.i = i;
+    const num = it.type === 'block' ? '' : ++n;
+    const len = itemLen(it);
+    row.innerHTML = '<span class="n">' + num + '</span><span class="ic">' + icon(it) + '</span><span class="ti">' + esc(itemTitle(it)) + '</span>'
+      + '<span class="tag"></span>'
+      + (it.type !== 'block' ? '<span class="ln">' + (len ? fmt(len) : '') + (it.after === 'continue' ? ' ⏩' : ' ⏸') + '</span><button class="fireBtn lockable" title="Disparar ya">▶</button>' : '');
+    row.onclick = (e) => { if (e.target.classList.contains('fireBtn')) return; if (document.body.classList.contains('locked')) return; cmd({ cmd: 'goto', index: i }); };
+    const fb = row.querySelector('.fireBtn'); if (fb) fb.onclick = () => cmd({ cmd: 'fire', index: i });
+    box.appendChild(row);
+  });
+  paintCueMarks();
+}
+function paintCueMarks() {
+  document.querySelectorAll('#cueList .cue').forEach((r) => {
+    const i = Number(r.dataset.i);
+    const isNow = st.mode === 'guion' && st.status !== 'stopped' && i === st.cueIndex;
+    r.classList.toggle('now', isNow);
+    r.classList.toggle('next', i === st.nextIndex);
+    const tag = r.querySelector('.tag'); if (tag) tag.textContent = i === st.nextIndex ? 'SIGUIENTE' : isNow ? '' : '';
+  });
+}
+
+// ====================== editor de guion ======================
+let saveT = 0;
+let quietUntil = 0;   // mientras guardamos, no recargar el guion que llega del reproductor (sería la versión anterior)
+function saveShow() {
+  show.rev = String(Date.now()) + uid(); knownRev = show.rev;
+  quietUntil = Date.now() + 60000;
+  renderCues();
+  clearTimeout(saveT);
+  saveT = setTimeout(async () => {
+    try { const r = await fetch('/api/show', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(show) }); const j = await r.json(); if (!j.ok) toast(j.error || 'No se pudo guardar'); }
+    catch { toast('No se pudo guardar el guion'); }
+    quietUntil = Date.now() + 2500;
+  }, 400);
+}
+
+function describe(it) {
+  if (it.type === 'block') return 'Bloque' + (it.note ? ' · con notas' : '');
+  const parts = [];
+  if (it.type === 'song') { const l = itemLen(it); if (l) parts.push(fmt(l)); if (it.fadeIn) parts.push('entra en ' + it.fadeIn + ' s'); if (it.fadeOut) parts.push('sale en ' + it.fadeOut + ' s'); if (it.endAt) parts.push('corta en ' + fmt(it.endAt)); if (it.loop) parts.push('bucle'); const g = show.gains[it.file]; if (typeof g === 'number' && g < 1) parts.push('vol ' + Math.round(g * 100) + '%'); }
+  else parts.push(it.seconds + ' s');
+  parts.push(it.after === 'continue' ? 'sigue sin parar ⏩' : 'espera tu orden ⏸');
+  if (it.note) parts.push('📝');
+  return parts.join(' · ');
+}
+
+function renderEditor() {
+  $('showName').value = show.name || '';
+  const box = $('edList'); box.innerHTML = '';
+  if (!show.items.length) { box.innerHTML = '<div class="muted">Vacío. Añade canciones, silencios o bloques, o pulsa «Crear con todas las canciones».</div>'; return; }
+  show.items.forEach((it, i) => {
+    const row = document.createElement('div'); row.className = 'it' + (it.type === 'block' ? ' block' : '');
+    row.innerHTML = '<span>' + icon(it) + '</span><div class="ti"><b>' + esc(itemTitle(it)) + '</b><span>' + esc(describe(it)) + '</span></div>'
+      + '<button data-a="up">↑</button><button data-a="down">↓</button><button data-a="edit">✎</button><button data-a="del">🗑</button>';
+    row.querySelectorAll('button').forEach((b) => b.onclick = () => {
+      const a = b.dataset.a;
+      if (a === 'up' && i > 0) { [show.items[i - 1], show.items[i]] = [show.items[i], show.items[i - 1]]; saveShow(); renderEditor(); }
+      if (a === 'down' && i < show.items.length - 1) { [show.items[i + 1], show.items[i]] = [show.items[i], show.items[i + 1]]; saveShow(); renderEditor(); }
+      if (a === 'edit') openSheet(i);
+      if (a === 'del' && confirm('¿Quitar «' + itemTitle(it) + '» del guion?')) { show.items.splice(i, 1); saveShow(); renderEditor(); }
+    });
+    row.querySelector('.ti').onclick = () => openSheet(i);
+    box.appendChild(row);
+  });
+}
+
+$('showName').addEventListener('input', () => { show.name = $('showName').value; saveShow(); });
+function addItem(it) { show.items.push(Object.assign({ id: uid(), title: '', note: '', file: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false }, it)); saveShow(); renderEditor(); openSheet(show.items.length - 1); }
+$('addSong').onclick = () => { if (!songs.length) return toast('No hay canciones en el reproductor'); addItem({ type: 'song', file: songs[0].file }); };
+$('addSilence').onclick = () => addItem({ type: 'silence', seconds: 10 });
+$('addBlock').onclick = () => addItem({ type: 'block', title: 'Bloque ' + (show.items.filter((i) => i.type === 'block').length + 1) });
+$('fillAll').onclick = () => {
+  if (!songs.length) return toast('No hay canciones en el reproductor');
+  if (show.items.length && !confirm('¿Sustituir el guion actual por todas las canciones en orden?')) return;
+  show.items = songs.map((s) => ({ id: uid(), type: 'song', file: s.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false }));
+  saveShow(); renderEditor();
+};
+
+function openSheet(i) {
+  const it = show.items[i]; if (!it) return;
+  const box = $('sheetBox');
+  const seg = (name, val, opts) => '<div class="seg" data-seg="' + name + '">' + opts.map(([v, l]) => '<button data-v="' + v + '" class="' + (String(val) === String(v) ? 'on' : '') + '">' + l + '</button>').join('') + '</div>';
+  let html = '<div class="row" style="justify-content:space-between"><b style="font-size:18px">' + icon(it) + ' Editar ' + (it.type === 'song' ? 'canción' : it.type === 'silence' ? 'silencio' : 'bloque') + '</b><button class="btn" id="shClose">Cerrar</button></div>';
+  if (it.type === 'song') {
+    html += '<label class="f">Canción</label><select id="fFile">' + songs.map((s) => '<option value="' + esc(s.file) + '"' + (s.file === it.file ? ' selected' : '') + '>' + esc(s.title) + '</option>').join('') + (songs.some((s) => s.file === it.file) ? '' : '<option selected value="' + esc(it.file) + '">' + esc(it.file) + ' (no encontrada)</option>') + '</select>';
+    html += '<label class="f">Título en pantalla (opcional)</label><input type="text" id="fTitle" value="' + esc(it.title) + '" placeholder="' + esc(titleOf(it.file)) + '">';
+  } else if (it.type === 'silence') {
+    html += '<label class="f">Duración del silencio (segundos)</label><input type="number" id="fSeconds" min="1" step="1" value="' + it.seconds + '">';
+    html += '<label class="f">Título en pantalla (opcional)</label><input type="text" id="fTitle" value="' + esc(it.title) + '" placeholder="Silencio">';
+  } else {
+    html += '<label class="f">Nombre del bloque</label><input type="text" id="fTitle" value="' + esc(it.title) + '">';
+  }
+  html += '<label class="f">Notas del guion (se ven en Directo)</label><textarea id="fNote" placeholder="Ej.: Entra el presentador · bajan luces">' + esc(it.note) + '</textarea>';
+  if (it.type !== 'block') {
+    html += '<label class="f">Al terminar…</label>' + seg('after', it.after, [['wait', '⏸ Esperar mi orden'], ['continue', '⏩ Seguir sin parar']]);
+    html += '<div class="muted" style="margin-top:4px">Esperar: se queda listo lo siguiente y lo lanzas tú. Seguir: arranca lo siguiente solo (canción o silencio).</div>';
+  }
+  if (it.type === 'song') {
+    const g = typeof show.gains[it.file] === 'number' ? Math.round(show.gains[it.file] * 100) : 100;
+    html += '<div class="grid2"><div><label class="f">Fundido de entrada (s)</label><input type="number" id="fIn" min="0" step="0.5" value="' + it.fadeIn + '"></div><div><label class="f">Fundido de salida (s)</label><input type="number" id="fOut" min="0" step="0.5" value="' + it.fadeOut + '"></div></div>';
+    html += '<div class="grid2"><div><label class="f">Empezar en (m:ss)</label><input type="text" id="fStart" inputmode="numeric" placeholder="0:00" value="' + (it.startAt ? fmt(it.startAt) : '') + '"></div><div><label class="f">Cortar en (m:ss)</label><input type="text" id="fEnd" inputmode="numeric" placeholder="hasta el final" value="' + (it.endAt ? fmt(it.endAt) : '') + '"></div></div>';
+    html += '<div class="grid2"><div><label class="f">Volumen de esta canción (%)</label><input type="number" id="fGain" min="0" max="100" step="1" value="' + g + '"></div><div><label class="f">Repetir en bucle</label>' + seg('loop', it.loop ? 1 : 0, [[0, 'No'], [1, 'Sí']]) + '</div></div>';
+    html += '<div class="muted" style="margin-top:4px">En bucle la canción se repite hasta que pulses SIGUIENTE (útil para música de espera).</div>';
+  }
+  html += '<div class="row" style="margin-top:16px"><button class="btn verde" id="shSave" style="flex:1">Guardar</button><button class="btn" id="shDup">Duplicar</button><button class="btn rojo" id="shDel">Quitar</button></div>';
+  box.innerHTML = html;
+  box.querySelectorAll('[data-seg]').forEach((s) => s.querySelectorAll('button').forEach((b) => b.onclick = () => { s.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); }));
+  const segVal = (n) => { const b = box.querySelector('[data-seg="' + n + '"] button.on'); return b ? b.dataset.v : null; };
+  $('sheet').style.display = 'flex';
+  const close = () => { $('sheet').style.display = 'none'; renderEditor(); };
+  $('shClose').onclick = close;
+  $('shSave').onclick = () => {
+    it.title = ($('fTitle') && $('fTitle').value.trim()) || '';
+    it.note = $('fNote').value;
+    if (it.type !== 'block') it.after = segVal('after') === 'continue' ? 'continue' : 'wait';
+    if (it.type === 'silence') it.seconds = Math.max(1, Number($('fSeconds').value) || 5);
+    if (it.type === 'song') {
+      it.file = $('fFile').value;
+      it.fadeIn = Math.max(0, Number($('fIn').value) || 0);
+      it.fadeOut = Math.max(0, Number($('fOut').value) || 0);
+      it.startAt = parseTime($('fStart').value);
+      it.endAt = parseTime($('fEnd').value);
+      it.loop = segVal('loop') === '1';
+      const g = Math.min(100, Math.max(0, Number($('fGain').value)));
+      if (!isNaN(g)) { if (g >= 100) delete show.gains[it.file]; else show.gains[it.file] = g / 100; }
+    }
+    saveShow(); close(); toast('Guardado', true);
+  };
+  $('shDup').onclick = () => { show.items.splice(i + 1, 0, Object.assign({}, it, { id: uid() })); saveShow(); close(); };
+  $('shDel').onclick = () => { if (!confirm('¿Quitar del guion?')) return; show.items.splice(i, 1); saveShow(); close(); };
+}
+$('sheet').addEventListener('click', (e) => { if (e.target.id === 'sheet') { $('sheet').style.display = 'none'; renderEditor(); } });
+
+// ====================== canciones (libre) ======================
+function renderSongs() {
+  const box = $('songList'); box.innerHTML = '';
+  if (!songs.length) { box.innerHTML = '<div class="muted" style="padding:12px 0">No hay canciones en el reproductor. En el ordenador, cópialas en la carpeta «canciones»; en el móvil, añádelas desde la app. Luego pulsa ⟳ Recargar.</div>'; return; }
+  songs.forEach((s) => {
+    const g = typeof show.gains[s.file] === 'number' ? Math.round(show.gains[s.file] * 100) : 100;
+    const d = (st.durations || {})[s.file];
+    const row = document.createElement('div'); row.className = 's' + (st.file === s.file ? ' on' : '');
+    const inShow = show.items.some((i) => i.type === 'song' && i.file === s.file);
+    row.innerHTML = '<button class="lockable">▶</button><span class="ti">' + esc(s.title) + ' <span class="muted">' + (d ? fmt(d) : '') + (inShow ? '' : ' · <span class="nuevo">fuera del guion</span>') + '</span></span><button class="lockable sig" title="Añadir al guion como siguiente">＋ Sig.</button><button class="lockable">−1</button><span class="g">' + g + '%</span><button class="lockable">+1</button>';
+    const [pb, add, minus, plus] = row.querySelectorAll('button');
+    pb.onclick = () => cmd({ cmd: 'play', file: s.file });
+    add.onclick = () => addAsNext(s);
+    minus.onclick = () => cmd({ cmd: 'gain', file: s.file, delta: -1 });
+    plus.onclick = () => cmd({ cmd: 'gain', file: s.file, delta: 1 });
+    box.appendChild(row);
+  });
+}
+// Añadir una canción al guion justo como la siguiente, en caliente, sin parar lo que suena
+async function addAsNext(s) {
+  const it = { id: uid(), type: 'song', file: s.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false };
+  const curK = st.itemId ? show.items.findIndex((i) => i.id === st.itemId) : -1;
+  const pos = curK >= 0 ? curK + 1 : (st.nextIndex >= 0 ? st.nextIndex : show.items.length);
+  show.items.splice(pos, 0, it);
+  show.rev = String(Date.now()) + uid(); knownRev = show.rev; quietUntil = Date.now() + 2500;
+  try {
+    const r = await fetch('/api/show', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(show) });
+    if (!(await r.json()).ok) throw 0;
+    await cmd({ cmd: 'goto', index: pos });
+    toast('«' + s.title + '» será la siguiente', true);
+  } catch { toast('No se pudo añadir al guion'); }
+  renderCues(); renderSongs();
+}
+$('reloadSongs').onclick = async () => { await cmd({ cmd: 'reloadSongs' }); setTimeout(loadSongs, 800); };
+
+// ====================== datos del reproductor ======================
+async function loadSongs() { try { songs = await (await fetch('/api/songs', { cache: 'no-store' })).json(); } catch { songs = []; } if ($('p-songs').classList.contains('on')) renderSongs(); }
+async function loadShow() {
+  try { const s = await (await fetch('/api/show', { cache: 'no-store' })).json(); if (s) { show = EscenarioEngine.normalize(s); knownRev = show.rev; } } catch {}
+  renderCues();
+  if ($('p-edit').classList.contains('on') && $('sheet').style.display !== 'flex') renderEditor();
+  if ($('p-songs').classList.contains('on')) renderSongs();
+}
+
+let lastSongsVersion = null, lastDurKeys = 0;
+let ctlVersion = null;
+function onState(s) {
+  // Si el reproductor se ha actualizado, el control se recarga para usar la versión nueva
+  if (s.appVersion) { if (!ctlVersion) ctlVersion = s.appVersion; else if (s.appVersion !== ctlVersion) { location.reload(); return; } }
+  st = s;
+  if (st.showVersion && st.showVersion !== knownRev && Date.now() > quietUntil && $('sheet').style.display !== 'flex') { knownRev = st.showVersion; loadShow(); }
+  if (st.songsVersion !== undefined && st.songsVersion !== lastSongsVersion) { lastSongsVersion = st.songsVersion; loadSongs(); }
+  const dk = Object.keys(st.durations || {}).length; if (dk !== lastDurKeys) { lastDurKeys = dk; renderCues(); }
+  paintLive();
+}
+
+async function connect() {
+  let info = {};
+  try { info = await (await fetch('/api/info')).json(); } catch {}
+  if (info.sse === false) return poll();
+  const es = new EventSource('/events?role=control');
+  es.addEventListener('state', (e) => onState(JSON.parse(e.data)));
+  es.onerror = () => { $('conn').className = 'ko'; $('conn').textContent = '● Sin conexión'; };
+}
+async function poll() {
+  for (;;) {
+    try { onState(await (await fetch('/api/state', { cache: 'no-store' })).json()); }
+    catch { $('conn').className = 'ko'; $('conn').textContent = '● Sin conexión'; }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+}
+setInterval(() => { $('clk').textContent = hhmm(new Date()); }, 10000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { loadSongs(); loadShow(); } });
+
+loadSongs().then(loadShow).then(connect);
+</script>
+</body>
+</html>
