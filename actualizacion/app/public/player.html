@@ -82,16 +82,25 @@
   html:has(body.app)::-webkit-scrollbar { width: 10px; } html:has(body.app)::-webkit-scrollbar-track { background: #111; }
   html:has(body.app)::-webkit-scrollbar-thumb { background: #333; border-radius: 6px; border: 2px solid #111; }
   body.app .top { margin-top: -18px; }
+  /* Modo control en este mismo aparato: el control ocupa la pantalla y el sonido sigue saliendo de aquí */
+  #selfCtl { display: none; position: fixed; inset: 0; z-index: 28; background: #0d0d0d; flex-direction: column; }
+  body.app #selfCtl { top: 38px; }
+  #selfCtl.on { display: flex; }
+  #selfCtl .sb { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #161616; border-bottom: 1px solid #262626; font-size: 13px; color: #9a9a9a; }
+  #selfCtl .sb b { color: #eee; flex: 1; }
+  #selfCtl iframe { flex: 1; border: 0; width: 100%; background: #0d0d0d; }
+  .btn.ctlmode { background: #23303a; color: #9ad; }
 </style>
 </head>
 <body>
   <div id="conn" class="ko">Conectando…</div>
+  <div id="selfCtl"><div class="sb"><b>🎛 Modo control · el sonido sale de este aparato</b><button class="btn" id="selfCtlBack">‹ Volver al reproductor</button></div><iframe id="selfCtlFrame" title="Control"></iframe></div>
   <div id="appbar">Maestro · Reproductor</div>
   <div class="top"><div class="marca"><span class="mt">Maestro</span><span class="by">by <img src="/avi.png" alt="AVI"> Music</span></div></div>
   <div class="wrap">
     <div>
       <div class="card">
-        <h1 id="plHead">Reproductor · deja esta pestaña abierta</h1>
+        <div class="row" style="justify-content:space-between;align-items:center"><h1 id="plHead" style="margin:0">Reproductor · deja esta pestaña abierta</h1><button class="btn ctlmode" id="selfCtlBtn" title="Usar el control remoto en este mismo aparato">🎛 Modo control</button></div>
         <div id="title">—</div>
         <div id="status">Esperando órdenes del control</div>
         <div class="bar"><div id="prog"></div></div>
@@ -202,6 +211,18 @@ const engine = EscenarioEngine.Engine({
     $('time').textContent = fmt(st.position) + ' / ' + fmt(st.duration);
   },
 });
+
+// ---------- modo control en este mismo aparato ----------
+function selfControl(on) {
+  const f = $('selfCtlFrame');
+  if (on && !f.getAttribute('src')) f.src = '/?local=1';
+  $('selfCtl').classList.toggle('on', on);
+  document.documentElement.style.overflow = on ? 'hidden' : '';
+  try { localStorage.setItem('maestroSelfCtl', on ? '1' : ''); } catch {}
+}
+$('selfCtlBtn').onclick = () => selfControl(true);
+$('selfCtlBack').onclick = () => selfControl(false);
+try { if (localStorage.getItem('maestroSelfCtl') === '1') setTimeout(() => selfControl(true), 300); } catch {}
 
 // ---------- actualizaciones ----------
 let myVersion = null, updBusy = false;

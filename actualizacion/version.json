@@ -1,12 +1,12 @@
 {
- "version": "1.2.1",
- "notas": "Ventana sin marco con botones integrados",
+ "version": "1.2.2",
+ "notas": "Modo control en el mismo aparato que reproduce",
  "files": {
   "server.js": "e9e6be9450e6b9cf0d32216b7dc900dae52cabb805064d2a7c8838043580257f",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "6cf4e084b47f33c9b02ef79279d157833868f8f70514169a768be353ee328fea",
-  "LEEME.txt": "95efa29f726cb7ee0a6e0c71d378a3ca3aa5b0c60b954c1ebbcbd0df35323ceb",
+  "version.txt": "c62a5cc61ac4525935753f5ec284c0a052a4b1da4b3a3580dce2b7d77a2154ae",
+  "LEEME.txt": "8f1a55b40115ae6b30e0d8c38574b845cb2bf5eb4304aabac166d9fa8fd7add6",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
   "public/control.html": "e824f7a29aac77d6179317e6ac2944cde864d10decf04054bfa7d12b9a4d4198",
   "public/engine.js": "c15657090d53fc3f65a4d45e7a5ecd1beaf3fe99964110a4546b6660d4e61a44",
@@ -14,11 +14,11 @@
   "public/favicon.png": "6fd0963702659dfacba81ebedad3bafd453af7d428e3d4b225b6b5fb8dc5dad4",
   "public/icono-180.png": "eaf8871583ddcccc20d7bef4116bea29dfdceda862f66dc998c354d18e4ca4c0",
   "public/icono-512.png": "c590f32de3965d27ba1b7631074951e0792c8c0f20c1da487e294218b52400c4",
-  "public/player.html": "07c04836317b55957ac970975c37ccecdc925d21e9146cb38dae497eac74df3e",
+  "public/player.html": "03e8af19d4fb1722d7e277d94ba7ce99dd490633843a8f076292ef312811b3f5",
   "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780"
  },
  "apk": {
-  "version": "1.2.0",
+  "version": "1.2.2",
   "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
  }
 }

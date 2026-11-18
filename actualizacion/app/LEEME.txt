@@ -89,6 +89,11 @@ MÓVIL O TABLETA COMO REPRODUCTOR (app Android «Maestro»)
 Instalar el APK: pásalo al móvil (WhatsApp, USB, Drive…), ábrelo y acepta
 «Permitir instalar apps de esta fuente». No está en Google Play.
 
+MODO CONTROL EN EL MISMO APARATO
+- En el reproductor, pulsa «🎛 Modo control». La pantalla pasa a ser el control remoto.
+- El sonido sigue saliendo de ese aparato. Los demás controles conectados siguen funcionando.
+- «‹ Volver al reproductor» te devuelve a la pantalla del reproductor.
+
 ACTUALIZACIONES
 - Con internet, Maestro busca versiones nuevas al abrirse. Aviso en el reproductor.
 - Pulsa «Actualizar ahora». Descarga, comprueba y se reinicia solo en segundos.
