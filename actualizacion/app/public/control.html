@@ -44,7 +44,7 @@
   .btn:disabled { opacity: .35; }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-  /* Directo */
+  /* Escenario */
   .live { display: grid; grid-template-columns: 1fr; gap: 12px; }
   @media (min-width: 900px) { .live { grid-template-columns: 1.35fr 1fr; } }
   .label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #888; font-weight: 700; }
@@ -183,11 +183,11 @@
   .marca { display: flex; flex-direction: column; line-height: 1; -webkit-user-select: none; user-select: none; }
   .marca .mt { font-weight: 800; letter-spacing: -.02em; color: #f2ede2; }
   .marca .by { display: flex; align-items: center; gap: 5px; margin-top: 3px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8a8478; }
-  .marca .by img { width: 14px; height: 14px; border-radius: 2px; display: block; }
+  .marca .by img { height: 10px; width: auto; display: block; opacity: .85; }
   header .marca { flex-basis: 100%; padding: 2px 2px 4px; }
   header .marca .mt { font-size: 19px; }
   header .marca .by { margin-top: 3px; font-size: 9px; }
-  header .marca .by img { width: 12px; height: 12px; }
+  header .marca .by img { height: 9px; }
 </style>
 </head>
 <body>
@@ -196,9 +196,9 @@
   En Chrome: menú ⋯ → «Solicitar sitio móvil». En Safari: aA → «Solicitar sitio web móvil».
 </div>
 <header class="noselect">
-  <div class="marca"><span class="mt">Maestro</span><span class="by">by <img src="/avi-music.png" alt="AVI"> AVI Music</span></div>
+  <div class="marca"><span class="mt">Maestro</span><span class="by">by <img src="/avi.png" alt="AVI"> Music</span></div>
   <div class="tabs lockable">
-    <button class="tab on" data-page="live">Directo</button>
+    <button class="tab on" data-page="live">Escenario</button>
     <button class="tab" data-page="edit">Guion</button>
     <button class="tab" data-page="songs">Canciones</button>
   </div>
@@ -212,7 +212,7 @@
 </header>
 
 <main>
-  <!-- ===================== DIRECTO ===================== -->
+  <!-- ===================== ESCENARIO ===================== -->
   <section class="page on" id="p-live">
     <div class="live">
       <div>
@@ -415,7 +415,7 @@ $('volSlider').addEventListener('change', () => { const v = Math.round(posToVol(
 document.querySelectorAll('[data-v]').forEach((b) => b.onclick = () => cmd({ cmd: 'volstep', value: Number(b.dataset.v) }));
 document.querySelectorAll('[data-g]').forEach((b) => b.onclick = () => { if (!st.file) return toast('No suena ninguna canción'); cmd({ cmd: 'gain', file: st.file, delta: Number(b.dataset.g) }); });
 
-// ====================== pintar Directo ======================
+// ====================== pintar Escenario ======================
 const icon = (it) => it.type === 'song' ? '🎵' : it.type === 'silence' ? '⏸' : '📂';
 const itemTitle = (it) => it.type === 'silence' ? (it.title || 'Silencio ' + it.seconds + ' s') : (it.title || titleOf(it.file) || 'Bloque');
 function itemLen(it) {
@@ -490,6 +490,7 @@ function paintCueMarks() {
 let saveT = 0;
 let quietUntil = 0;   // mientras guardamos, no recargar el guion que llega del reproductor (sería la versión anterior)
 function saveShow() {
+  if (!show.items.length) show.empty = true; else delete show.empty;   // si lo vacías a mano, no se vuelve a rellenar solo
   show.rev = String(Date.now()) + uid(); knownRev = show.rev;
   quietUntil = Date.now() + 60000;
   renderCues();
@@ -608,7 +609,7 @@ function openSheet(i) {
   } else {
     html += '<label class="f">Nombre del bloque</label><input type="text" id="fTitle" value="' + esc(it.title) + '">';
   }
-  html += '<label class="f">Notas del guion (se ven en Directo)</label><textarea id="fNote" placeholder="Ej.: Entra el presentador · bajan luces">' + esc(it.note) + '</textarea>';
+  html += '<label class="f">Notas del guion (se ven en Escenario)</label><textarea id="fNote" placeholder="Ej.: Entra el presentador · bajan luces">' + esc(it.note) + '</textarea>';
   if (it.type !== 'block') {
     html += '<label class="f">Al terminar…</label>' + seg('after', it.after, [['wait', '⏸ Esperar mi orden'], ['continue', '⏩ Seguir sin parar']]);
     html += '<div class="muted" style="margin-top:4px">Esperar: se queda listo lo siguiente y lo lanzas tú. Seguir: arranca lo siguiente solo (canción o silencio).</div>';

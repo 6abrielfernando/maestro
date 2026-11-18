@@ -23,6 +23,7 @@
     return {
       name: show.name || 'Mi show',
       rev: show.rev || String(Date.now()),
+      ...(show.empty ? { empty: true } : {}),   // show creado vacío a propósito: no rellenarlo solo
       gains: show.gains && typeof show.gains === 'object' ? show.gains : {},
       items: items.filter((i) => i && ['block', 'song', 'silence'].includes(i.type)).map((i) => ({
         id: i.id || uid(),
@@ -291,7 +292,7 @@
       try { songs = await io.listSongs(); } catch { songs = []; }
       probeDurations();
       // Si no hay guion, se crea uno con todas las canciones (cada una espera la orden)
-      if (!show.items.length && songs.length && !show.rev) {
+      if (!show.items.length && songs.length && !show.empty) {
         show.items = songs.filter((x) => !x.file.startsWith('@')).slice(0, 300).map((s) => ({ id: uid(), type: 'song', file: s.file, title: '', note: '', after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false, seconds: 5 }));
         show = normalize(show); nextIndex = nextPlayable(0); saveShow();
       }

@@ -43,7 +43,7 @@ EL DÍA DEL EVENTO
    NOMBRE=maestro2 (ver AJUSTES).
 
 EL CONTROL (tableta o móvil): tres pestañas
-DIRECTO
+ESCENARIO (PESTAÑA DEL CONTROL)
 - Botón grande ▶ SIGUIENTE: dispara lo que toca según el guion. Es lo único que hay que pulsar.
 - Arriba: hora, tiempo de show y hora prevista de fin.
 - Lo que suena: título, tiempo que queda (en rojo los últimos 10 s) y las notas del guion.
@@ -63,7 +63,7 @@ GUION
 - Crea el show con bloques (📂), canciones (🎵) y silencios (⏸).
 - «+ Canción» abre un buscador: escribe parte del título o de la carpeta y toca para añadir.
 - Ordena con ↑ ↓, o mantén pulsado ⠿ y arrastra la fila a su sitio.
-- En cada elemento (✎): notas para el directo y AL TERMINAR:
+- En cada elemento (✎): notas que se ven en Escenario y AL TERMINAR:
     ⏸ Esperar mi orden → termina y se queda listo lo siguiente; lo lanzas tú.
     ⏩ Seguir sin parar → arranca solo lo siguiente (canción o silencio).
 - En canciones: fundido de entrada y de salida, empezar en / cortar en (m:ss),
@@ -97,7 +97,7 @@ ACTUALIZACIONES
 - Sin internet no pasa nada: sigue funcionando igual.
 - App Android: aviso en la pantalla de inicio. Descarga el APK e instálalo encima.
 
-CONSEJOS PARA EL DIRECTO
+CONSEJOS PARA EL SHOW
 - Desactiva el reposo del ordenador y las notificaciones (modo No molestar).
 - Conecta el ordenador al router por cable si puedes.
 - Ten un plan B: alguien junto al ordenador o un teclado inalámbrico.

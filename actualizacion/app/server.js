@@ -195,7 +195,7 @@ async function handler(req, res) {
 
   if (p === '/qrcode.js' || p === '/engine.js') return serveFile(res, path.join(PUBLIC_DIR, p.slice(1)));
   // Iconos (pestaña del navegador y pantalla de inicio del móvil)
-  if (p === '/avi-music.png' || p === '/favicon.ico' || p === '/favicon.png' || p === '/icono-180.png' || p === '/icono-512.png') return serveFile(res, path.join(PUBLIC_DIR, p.slice(1)));
+  if (p === '/avi.png' || p === '/favicon.ico' || p === '/favicon.png' || p === '/icono-180.png' || p === '/icono-512.png') return serveFile(res, path.join(PUBLIC_DIR, p.slice(1)));
   if (p === '/apple-touch-icon.png' || p === '/apple-touch-icon-precomposed.png') return serveFile(res, path.join(PUBLIC_DIR, 'icono-180.png'));
 
   if (p === '/api/cmd' && req.method === 'POST') {
@@ -261,7 +261,7 @@ async function handler(req, res) {
     if (b.action === 'new' || b.action === 'duplicate') {
       const src = b.action === 'duplicate' ? readShow(b.id || config.activeShow) : null;
       const id = newShowId();
-      const sh = src ? { ...src, name: name || (src.name || 'Show') + ' (copia)', rev: String(Date.now()) } : { name: name || 'Show nuevo', items: [], rev: String(Date.now()) };
+      const sh = src ? { ...src, name: name || (src.name || 'Show') + ' (copia)', rev: String(Date.now()) } : { name: name || 'Show nuevo', items: [], empty: true, rev: String(Date.now()) };
       writeShow(id, sh);
       if (b.activate !== false) activateShow(id); else { showsVersion++; broadcastState(); }
       return json(res, 200, { ok: true, id });
