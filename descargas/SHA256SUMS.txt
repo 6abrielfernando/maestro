@@ -1,4 +1,4 @@
 bf0e1a122d7575d36b5b4c2c61cb446d7413eed93c42c9148987720a2eb40166  Maestro-Mac.zip
 632f4c854255d43a1471fbd633537ae557d5bd5c722ef937459fda64abb1c9c9  Maestro-Windows-carpeta.zip
-d260d958454f2a31afe90c15a9e767c3d24ba04d2d6bda84dcf0d4bda390a7d0  Maestro-Android.apk
+00804394f6b644d9b96e3ec71c9e930973570a3b382c447469483312778d0fbf  Maestro-Android.apk
 1bd9eeeb2b03bdadb5a9d99b3ce8bce57ee22e709452e6ce8acf7b467f08c23d  Maestro-Windows.zip (unido desde partes/)

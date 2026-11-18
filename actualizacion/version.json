@@ -1,6 +1,6 @@
 {
  "version": "1.2.2",
- "notas": "Modo control en el mismo aparato que reproduce",
+ "notas": "Android: modo concierto automático al reproducir y botón en modo control",
  "files": {
   "server.js": "e9e6be9450e6b9cf0d32216b7dc900dae52cabb805064d2a7c8838043580257f",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
@@ -18,7 +18,7 @@
   "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780"
  },
  "apk": {
-  "version": "1.2.2",
+  "version": "1.2.3",
   "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
  }
 }
