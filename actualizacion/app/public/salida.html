@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<title>Maestro · Salida de vídeo</title>
+<style>
+  /* Salida de vídeo de Maestro: esta ventana va al proyector. El reproductor la maneja desde fuera. */
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; cursor: none; }
+  .escena { position: fixed; inset: 0; background: #000; }
+  .escena > * { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .escena video, .escena img { object-fit: contain; background: transparent; }
+  .escena .videos > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; }
+  .escena .capa { display: none; }
+  .escena .capa.on { display: block; }
+  .escena .negro { background: #000; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .escena .negro.on { opacity: 1; }
+  #ayuda { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #777; font: 600 15px/1.5 system-ui, sans-serif; text-align: center; letter-spacing: .02em; transition: opacity .4s; }
+  #ayuda b { color: #ddd; display: block; font-size: 22px; margin-bottom: 6px; letter-spacing: 0; }
+  body.listo #ayuda { opacity: 0; }
+  body:hover { cursor: default; }
+</style>
+</head>
+<body>
+<div class="escena" id="escena">
+  <video class="capa fondo" muted loop playsinline></video>
+  <div class="videos"></div>
+  <img class="capa imagen" alt="">
+  <div class="negro"></div>
+</div>
+<div id="ayuda"><b>Salida de vídeo de Maestro</b>Lleva esta ventana al proyector y haz doble clic para pantalla completa.</div>
+<script>
+  // Doble clic: pantalla completa (en el programa de Maestro ya se abre así en el proyector)
+  document.addEventListener('dblclick', () => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else document.documentElement.requestFullscreen().catch(() => {});
+  });
+  // Que el proyector no se apague por inactividad
+  async function wake() { try { if (navigator.wakeLock) await navigator.wakeLock.request('screen'); } catch {} }
+  wake(); document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+  // Avisar al reproductor de que la salida está lista (y si se recarga, vuelve a engancharse)
+  function hello() { try { if (window.opener && window.opener.maestroSalidaLista) window.opener.maestroSalidaLista(window); } catch {} }
+  hello();
+  setTimeout(() => document.body.classList.add('listo'), 6000);
+  window.addEventListener('beforeunload', () => { try { window.opener && window.opener.maestroSalidaCerrada && window.opener.maestroSalidaCerrada(window); } catch {} });
+</script>
+</body>
+</html>

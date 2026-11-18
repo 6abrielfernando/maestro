@@ -140,6 +140,20 @@
   body.app #appbar { background: var(--bg); border-bottom: 1px solid var(--line); color: var(--muted); font-weight: 600; letter-spacing: .14em; }
   #selfCtl .sb { background: var(--bg); border-bottom: 1px solid var(--line); }
   #selfCtl .sb b { font-weight: 600; letter-spacing: .02em; }
+  /* Salida de vídeo: monitor de vista previa (las mismas capas que la ventana del proyector) */
+  .monitor { position: relative; margin-top: 12px; aspect-ratio: 16 / 9; background: #000; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .monitor .escena { position: absolute; inset: 0; background: #000; }
+  .monitor .escena > * { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .monitor .escena video, .monitor .escena img { object-fit: contain; }
+  .monitor .escena .capa { display: none; } .monitor .escena .capa.on { display: block; }
+  .monitor .escena .videos > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; }
+  .monitor .escena .videos > video.on { display: block; }
+  .monitor .escena .negro { background: #000; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .monitor .escena .negro.on { opacity: 1; }
+  .monLabel { position: absolute; left: 10px; top: 10px; padding: 4px 8px; border-radius: 6px; background: rgba(11,12,14,.75); border: 1px solid var(--line); font: 600 11px/1 var(--ui); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .monLabel.vivo { color: #fff; border-color: var(--rojo); background: rgba(224,37,45,.85); }
+  #negroBtn.on { background: #fff; color: #000; border-color: #fff; }
+  #vidCard.sinvideo .monitor { display: none; }
 </style>
 </head>
 <body>
@@ -156,6 +170,20 @@
         <div id="status">Esperando órdenes del control</div>
         <div class="bar"><div id="prog"></div></div>
         <div id="time">0:00 / 0:00</div>
+      </div>
+      <div class="card" id="vidCard" style="margin-top:16px">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <h1 style="margin:0">Salida de vídeo</h1>
+          <div class="row">
+            <button class="btn" id="salidaBtn"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span id="salidaTxt">Abrir en el proyector</span></button>
+            <button class="btn" id="negroBtn" title="Poner el proyector en negro">Negro</button>
+          </div>
+        </div>
+        <div class="monitor" id="monitor">
+          <div class="escena" id="escenaLocal"><video class="capa fondo" muted loop playsinline></video><div class="videos"></div><img class="capa imagen" alt=""><video class="capa espejo" muted playsinline></video><div class="negro"></div></div>
+          <div class="monLabel" id="monLabel">Vista previa</div>
+        </div>
+        <div class="s" id="vidHint" style="margin-top:8px">Conecta el proyector como segunda pantalla y pulsa «Abrir en el proyector». Los vídeos e imágenes del guion se verán allí; el sonido sale por aquí, como siempre.</div>
       </div>
       <div class="card" style="margin-top:16px">
         <div id="join">
@@ -248,7 +276,18 @@ function forgetCache() { for (const [f, v] of blobCache) { const playing = engin
 
 const engine = EscenarioEngine.Engine({
   prefetch,
-  songUrl: (file) => { const c = blobCache.get(file); if (c) { c.at = Date.now(); return c.url; } prefetch(file).catch(() => {}); return '/audio/' + encodeURIComponent(file); },
+  songUrl: (file) => {
+    if (EscenarioEngine.isVideo(file) || EscenarioEngine.isImage(file)) return '/audio/' + encodeURIComponent(file);   // los vídeos no se copian a memoria
+    const c = blobCache.get(file); if (c) { c.at = Date.now(); return c.url; } prefetch(file).catch(() => {}); return '/audio/' + encodeURIComponent(file);
+  },
+  makeVideo: () => {
+    const root = escena(), v = root.ownerDocument.createElement('video');
+    v.playsInline = true; v.setAttribute('playsinline', '');
+    root.querySelector('.videos').appendChild(v);
+    return v;
+  },
+  visual: (v) => pintarEscena(v),
+  visualFade: (k) => { for (const r of escenas()) for (const el of r.children) if (!el.classList.contains('negro')) el.style.opacity = k; },
   metaUrl: (file) => '/audio/' + encodeURIComponent(file),
   listSongs: async () => (await fetch('/api/songs')).json(),
   loadShow: async () => (await fetch('/api/show', { cache: 'no-store' })).json(),
@@ -256,14 +295,65 @@ const engine = EscenarioEngine.Engine({
   pushState: (st) => {
     fetch('/api/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(st) }).catch(() => {});
     $('title').textContent = st.title || '—';
-    $('status').textContent = ({ stopped: 'Parado', paused: 'En pausa', playing: 'Sonando', fading: 'Fundido de salida…', silence: 'Silencio' }[st.status] || '')
+    $('status').textContent = ({ stopped: 'Parado', paused: 'En pausa', playing: st.video ? 'Vídeo en marcha' : 'Sonando', fading: 'Fundido de salida…', silence: 'Silencio', image: 'Imagen en pantalla' }[st.status] || '')
       + (st.nextTitle ? ' · Siguiente: ' + st.nextTitle : '');
     $('prog').style.width = st.duration ? (100 * st.position / st.duration) + '%' : '0';
     $('time').textContent = fmt(st.position) + ' / ' + fmt(st.duration);
     $('bigT').textContent = st.duration ? '−' + fmt(Math.max(0, st.duration - st.position)) : (st.status === 'silence' && st.remaining ? fmt(st.remaining) : '0:00');
     document.body.classList.toggle('sonando', st.status === 'playing');
+    if ((st.hasVisual ? 1 : 0) !== (window.__hv || 0)) { window.__hv = st.hasVisual ? 1 : 0; pintarSalida(); }
   },
 });
+
+// ---------- salida de vídeo (proyector) ----------
+let salida = null, ultimoVisual = { kind: 'none' };
+function salidaAbierta() { try { return !!(salida && !salida.closed && salida.document.getElementById('escena')); } catch { return false; } }
+function escena() { return salidaAbierta() ? salida.document.getElementById('escena') : $('escenaLocal'); }
+function escenas() { const l = [$('escenaLocal')]; if (salidaAbierta()) l.push(salida.document.getElementById('escena')); return l; }
+function pintarEscena(v) {
+  ultimoVisual = v;
+  const root = escena(), local = $('escenaLocal'), enProyector = salidaAbierta();
+  for (const r of escenas()) {
+    // vídeos: solo se ve el que suena; los que ya no tienen archivo se retiran
+    for (const el of [...r.querySelectorAll('.videos > video')]) {
+      if (v.kind === 'video' && el === v.el) { el.classList.add('on'); el.style.display = 'block'; }
+      else { el.classList.remove('on'); el.style.display = 'none'; if (!el.getAttribute('src')) el.remove(); }
+    }
+    const img = r.querySelector('.imagen'), fondo = r.querySelector('.fondo');
+    const showImg = (v.kind === 'image' || v.kind === 'idle') && (r === root || r === local);
+    if (showImg) { if (img.getAttribute('src') !== v.url) img.src = v.url; img.classList.add('on'); } else { img.classList.remove('on'); }
+    const showBg = v.kind === 'bg' && (r === root || r === local);
+    if (showBg) { if (fondo.getAttribute('src') !== v.url) { fondo.src = v.url; } fondo.classList.add('on'); fondo.play().catch(() => {}); }
+    else { fondo.classList.remove('on'); if (fondo.getAttribute('src')) { fondo.pause(); fondo.removeAttribute('src'); fondo.load(); } }
+    r.querySelector('.negro').classList.toggle('on', !!v.blackout);
+  }
+  // Con el proyector abierto, el monitor muestra un espejo del vídeo que suena allí
+  const espejo = local.querySelector('.espejo');
+  if (enProyector && v.kind === 'video' && v.el && v.el.ownerDocument !== document) {
+    try { const st = v.el.captureStream ? v.el.captureStream() : null; if (st) { espejo.srcObject = st; espejo.classList.add('on'); espejo.play().catch(() => {}); } } catch { espejo.classList.remove('on'); }
+  } else { espejo.classList.remove('on'); espejo.srcObject = null; }
+  $('negroBtn').classList.toggle('on', !!v.blackout);
+  pintarSalida();
+}
+function pintarSalida() {
+  const on = salidaAbierta();
+  $('salidaTxt').textContent = on ? 'Cerrar salida' : 'Abrir en el proyector';
+  $('monLabel').textContent = on ? 'En el proyector' : 'Vista previa';
+  $('monLabel').classList.toggle('vivo', on && ultimoVisual.kind !== 'none' && !ultimoVisual.blackout);
+  const st = engine.state();
+  $('vidCard').classList.toggle('sinvideo', !st.hasVisual && !on);
+}
+window.maestroSalidaLista = (w) => { salida = w; try { localStorage.setItem('maestroSalida', '1'); } catch {} pintarSalida(); setTimeout(() => { engine.resetPreload(); engine.resyncVisual(); }, 30); };
+window.maestroSalidaCerrada = (w) => { if (salida === w) { salida = null; try { localStorage.setItem('maestroSalida', ''); } catch {} setTimeout(() => { pintarSalida(); engine.resetPreload(); engine.resyncVisual(); }, 60); } };
+function abrirSalida(auto) {
+  const w = window.open('/salida', 'maestro-salida', 'popup=yes,width=960,height=540');
+  if (!w) { if (!auto) toast('El navegador ha bloqueado la ventana. Permite las ventanas emergentes para esta página.', 5000); return; }
+  salida = w;
+}
+$('salidaBtn').onclick = () => { if (salidaAbierta()) { try { salida.close(); } catch {} salida = null; try { localStorage.setItem('maestroSalida', ''); } catch {} setTimeout(() => { pintarSalida(); engine.resyncVisual(); }, 60); } else abrirSalida(false); };
+$('negroBtn').onclick = () => engine.handle({ cmd: 'blackout' });
+setInterval(() => { if (salida && !salidaAbierta() && (() => { try { return salida.closed; } catch { return true; } })()) { salida = null; pintarSalida(); engine.resetPreload(); engine.resyncVisual(); } }, 1500);
+try { if (localStorage.getItem('maestroSalida') === '1') setTimeout(() => abrirSalida(true), 800); } catch {}
 
 // ---------- modo control en este mismo aparato ----------
 function selfControl(on) {
@@ -347,7 +437,7 @@ async function loadFolder() {
     const row = document.createElement('div'); row.className = 'fo' + (x.ok ? '' : ' bad');
     row.innerHTML = '<span class="ic"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class="t"><b></b><span></span></span>'
       + (f.local ? '<button class="btn" data-a="open">Abrir</button>' : '') + (f.local && !x.fixed ? '<button class="btn" data-a="del" title="Desvincular (no borra nada)">Quitar</button>' : '');
-    row.querySelector('b').textContent = x.name + ' · ' + x.count + (x.count === 1 ? ' canción' : ' canciones');
+    row.querySelector('b').textContent = x.name + ' · ' + x.count + (x.count === 1 ? ' archivo' : ' archivos');
     row.querySelector('.t span').textContent = x.ok ? (x.path || '') : 'No se encuentra: ' + (x.path || '') + ' (¿disco desconectado?)';
     row.querySelectorAll('button').forEach((bt) => bt.onclick = async () => {
       if (bt.dataset.a === 'open') await fetch('/api/folders/open', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: x.id }) });

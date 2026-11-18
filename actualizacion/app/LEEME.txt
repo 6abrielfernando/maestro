@@ -89,6 +89,20 @@ MÓVIL O TABLETA COMO REPRODUCTOR (app Android «Maestro»)
 Instalar el APK: pásalo al móvil (WhatsApp, USB, Drive…), ábrelo y acepta
 «Permitir instalar apps de esta fuente». No está en Google Play.
 
+VÍDEO E IMÁGENES (PROYECTOR)
+- Mete vídeos (MP4 recomendado) e imágenes (JPG, PNG) en tus carpetas: aparecen en el buscador.
+- En el guion: «+ Canción o vídeo» para vídeos y «+ Imagen» para imágenes fijas.
+- Ordenador: conecta el proyector como segunda pantalla y pulsa «Abrir en el proyector».
+  En el programa de Windows se abre solo a pantalla completa en el proyector.
+  En el navegador: lleva la ventana al proyector y haz doble clic para pantalla completa.
+- El sonido de los vídeos sale por el mismo sitio que las canciones.
+- Botón «Negro»: apaga la imagen al instante (la música sigue). Está en el control y en el reproductor.
+- Pantalla de espera: en Guion, «Proyector cuando no hay nada» → elige una imagen (o negro).
+- Visual de fondo: en una canción, «Visual de fondo» → un vídeo sin sonido en bucle mientras suena.
+- Los fundidos de entrada y salida también funden la imagen a negro.
+- Android: conecta el móvil al proyector por cable USB-C a HDMI o duplica la pantalla (Chromecast).
+  En el reproductor, «4 · Proyector». Usa otro aparato como control.
+
 MODO CONTROL EN EL MISMO APARATO
 - En el reproductor, pulsa «🎛 Modo control». La pantalla pasa a ser el control remoto.
 - El sonido sigue saliendo de ese aparato. Los demás controles conectados siguen funcionando.

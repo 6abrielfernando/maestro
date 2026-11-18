@@ -20,13 +20,17 @@ const PORT = Number(process.env.PORT) || 8080;
 const HOSTNAME = (process.env.NOMBRE || 'maestro').replace(/\.local$/i, '');
 const SONGS_DIR = process.env.SONGS_DIR || path.join(__dirname, 'canciones');
 const PUBLIC_DIR = path.join(__dirname, 'public');
-const AUDIO_RE = /\.(mp3|wav|m4a|aac|ogg|flac|aiff?)$/i;
+// Archivos que Maestro usa: audio, vídeo (para el proyector) e imágenes (pantallas fijas)
+const AUDIO_RE = /\.(mp3|wav|m4a|aac|ogg|flac|aiff?|mp4|m4v|webm|mov|mkv|ogv|jpe?g|png|webp|gif|avif)$/i;
+const KIND_OF = (f) => /\.(mp4|m4v|webm|mov|mkv|ogv)$/i.test(f) ? 'video' : /\.(jpe?g|png|webp|gif|avif)$/i.test(f) ? 'image' : 'audio';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.mp3': 'audio/mpeg', '.wav': 'audio/wav', '.m4a': 'audio/mp4', '.aac': 'audio/aac',
   '.ogg': 'audio/ogg', '.flac': 'audio/flac', '.aif': 'audio/aiff', '.aiff': 'audio/aiff',
+  '.mp4': 'video/mp4', '.m4v': 'video/mp4', '.webm': 'video/webm', '.mov': 'video/quicktime', '.mkv': 'video/x-matroska', '.ogv': 'video/ogg',
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif', '.avif': 'image/avif',
   '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.woff2': 'font/woff2',
 };
 
@@ -71,7 +75,7 @@ function buildLibrary() {
     files.sort((a, b) => a.localeCompare(b, 'es', { numeric: true, sensitivity: 'base' }));
     for (const r of files) {
       const dir = r.includes('/') ? r.slice(0, r.lastIndexOf('/')) : '';
-      list.push({ file: src.id ? '@' + src.id + '/' + r : r, title: titleOf(r), folder: src.name, dir });
+      list.push({ file: src.id ? '@' + src.id + '/' + r : r, title: titleOf(r), folder: src.name, dir, kind: KIND_OF(r) });
     }
   }
   library = list;
@@ -149,7 +153,7 @@ function serveAudio(req, res, name) {
 }
 
 const COMMANDS = new Set(['go', 'fire', 'goto', 'skip', 'back', 'restart', 'play', 'toggle', 'stop', 'fade', 'panic',
-  'volume', 'volstep', 'gain', 'seek', 'reloadSongs', 'next', 'prev']);
+  'volume', 'volstep', 'gain', 'seek', 'reloadSongs', 'next', 'prev', 'blackout']);
 const SHOW_FILE = process.env.SHOW_FILE || path.join(__dirname, 'guion.json');
 let showJson = fs.existsSync(SHOW_FILE) ? fs.readFileSync(SHOW_FILE, 'utf8') : 'null';
 
@@ -173,6 +177,7 @@ async function handler(req, res) {
 
   if (p === '/' || p === '/control') return serveFile(res, path.join(PUBLIC_DIR, 'control.html'));
   if (p === '/player') return serveFile(res, path.join(PUBLIC_DIR, 'player.html'));
+  if (p === '/salida') return serveFile(res, path.join(PUBLIC_DIR, 'salida.html'));
 
   if (p === '/events') {
     const role = url.searchParams.get('role') === 'player' ? 'player' : 'control';

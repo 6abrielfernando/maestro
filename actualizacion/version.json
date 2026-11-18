@@ -1,15 +1,15 @@
 {
- "version": "1.3.0",
- "notas": "Nuevo diseño Consola: más claro, profesional y con fuentes propias",
+ "version": "1.4.0",
+ "notas": "Vídeo e imágenes al proyector: salida de vídeo, botón Negro, pantalla de espera y visuales de fondo",
  "files": {
-  "server.js": "0c7605ac0d9023169abb3fe054c98eabd0988504f1f0c7baeed308e17e0717ce",
+  "server.js": "eb52e033ba27f01f509349924a9c65fcaa92503957ab0a3fb30bd2ff91841831",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "64d23f858ef51b0f996e4966d4e27c0371b437e2d2787890b1f7ad22d4ec5663",
-  "LEEME.txt": "8f1a55b40115ae6b30e0d8c38574b845cb2bf5eb4304aabac166d9fa8fd7add6",
+  "version.txt": "78b591400c56b7b67b8cb3b2b8a8e65e9093897f02ce0878e6b5405c68620fa7",
+  "LEEME.txt": "6e3620af9a59073f9d32fe53e1d141e514a60d31e6e30f64a5c24980887405dd",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
-  "public/control.html": "ff72f32c5c58d3918fa8dc2a2df0c7eb731a3f6a419f0bb6f25ed17d4c5e09fe",
-  "public/engine.js": "c15657090d53fc3f65a4d45e7a5ecd1beaf3fe99964110a4546b6660d4e61a44",
+  "public/control.html": "33ab7f6ac59658a81dbc2971e41feb5ed22d999b45aff462ed3f2064865d9048",
+  "public/engine.js": "d08a21064cdd6ba9a2eecff81e3fde20fafcd2ffde24267228b05e1fc9d315bc",
   "public/favicon.ico": "23baa002e42e5327bf38a264dd329a20e7b867e657df2181900e90fac105266c",
   "public/favicon.png": "6fd0963702659dfacba81ebedad3bafd453af7d428e3d4b225b6b5fb8dc5dad4",
   "public/fuentes-licencia.txt": "917115259b8ec6484e17e5fc404887488d42df70c03e929e2529db653b4cffb5",
@@ -19,11 +19,12 @@
   "public/inter.woff2": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
   "public/jbmono-ext.woff2": "79bfdab9ba467e26eea4122e6f2567e188dd8a09a8c730d501fc487c4ab99c6e",
   "public/jbmono.woff2": "18be452724bfdc236c074ca94a249a7f41a86752c7d04ab258ce9ed5651f6a7e",
-  "public/player.html": "1eea32c50c685c2700b85aec1f95b1e51c00058c3947a9e4f7201bc917a5ae91",
-  "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780"
+  "public/player.html": "ba2bb36b4f42e2f822aeae98b35a5dc4022c3ccc4c385002fcfb17f41b136f6a",
+  "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780",
+  "public/salida.html": "f05ba17225dc6c5140a087b27bb312b1a8d0290100d4251468e37f6587b086a1"
  },
  "apk": {
-  "version": "1.3.0",
+  "version": "1.4.0",
   "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
  }
 }

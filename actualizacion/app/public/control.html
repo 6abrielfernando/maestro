@@ -273,6 +273,12 @@
   .songs .s .nuevo { color: var(--ambar); }
   .songs .s.on .ti { color: var(--verde); }
   #toast { background: var(--rojo); font-family: var(--ui); } #toast.ok { background: var(--card2); border: 1px solid var(--line); color: var(--txt); }
+  .vidbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding: 8px 8px 8px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+  .vidbar .vt { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+  #negroBtn { min-width: 120px; height: 44px; }
+  #negroBtn.on { background: #fff; border-color: #fff; color: #000; }
+  .pk .th { width: 64px; height: 36px; flex-shrink: 0; border-radius: 6px; object-fit: cover; background: #000; border: 1px solid var(--line); display: inline-flex; align-items: center; justify-content: center; color: var(--muted); }
+  .songs .s .kd { color: var(--muted); display: inline-flex; vertical-align: -3px; margin-right: 4px; }
   @media (min-width: 760px) { header .marca { flex-basis: auto; margin-right: 26px; padding: 0 0 8px; } }
   @media (max-width: 520px) { .tabs { gap: 0; } .tab { flex: 1; } header { padding-left: 12px; padding-right: 12px; } .page { padding: 10px; } }
 </style>
@@ -328,6 +334,10 @@
           <button class="btn rojo" data-c="panic"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none"/></svg><small>Pánico</small></button>
         </div>
 
+        <div class="vidbar" id="vidBar" style="display:none">
+          <span class="vt"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg> Proyector</span>
+          <button class="btn lockable" id="negroBtn">Negro</button>
+        </div>
         <div class="card vol lockable">
           <div><div class="label">Volumen general</div><div class="val" id="volVal">100%</div></div>
           <div>
@@ -367,9 +377,12 @@
       </div>
       <label class="f" for="showName">Nombre del show</label>
       <input type="text" id="showName" placeholder="Mi show">
+      <label class="f">Proyector cuando no hay nada</label>
+      <div class="row" style="flex-wrap:nowrap"><div class="pickcur" id="idleCur" style="flex:1;margin:0;min-width:0"></div><button class="btn" id="idleBtn">Elegir imagen</button><button class="btn" id="idleDel" aria-label="Quitar imagen de espera">Negro</button></div>
       <div class="row" style="margin-top:12px">
-        <button class="btn verde" id="addSong">+ Canción</button>
+        <button class="btn verde" id="addSong">+ Canción o vídeo</button>
         <button class="btn" id="addSilence">+ Silencio</button>
+        <button class="btn" id="addImage">+ Imagen</button>
         <button class="btn" id="addBlock">+ Bloque</button>
         <button class="btn" id="fillAll">Crear con todas las canciones</button>
       </div>
@@ -399,7 +412,7 @@
 
 <script src="engine.js"></script>
 <script>
-const ICO = {"play": "<path d=\"M7 4.5v15l12-7.5z\" fill=\"currentColor\" stroke=\"none\"/>", "back": "<path d=\"M19 5v14L8 12z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M5 5v14\"/>", "skip": "<path d=\"M5 5v14l11-7z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M19 5v14\"/>", "pause": "<path d=\"M8 5v14M16 5v14\"/>", "fade": "<path d=\"M3 6c6 0 9 12 18 12\"/><path d=\"M3 18h18\" opacity=\".35\"/>", "stop": "<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"1.5\" fill=\"currentColor\" stroke=\"none\"/>", "lock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"9\" rx=\"2\"/><path d=\"M8 11V8a4 4 0 0 1 8 0v3\"/>", "unlock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"9\" rx=\"2\"/><path d=\"M8 11V8a4 4 0 0 1 7.5-2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"M20 20l-4.2-4.2\"/>", "grip": "<circle cx=\"9\" cy=\"6\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"6\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"9\" cy=\"12\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"12\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"9\" cy=\"18\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"18\" r=\"1.3\" fill=\"currentColor\"/>", "folder": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "note": "<path d=\"M9 18V6l10-2v12\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.5\"/><circle cx=\"16.5\" cy=\"16\" r=\"2.5\"/>", "silence": "<path d=\"M5 12h3M16 12h3\"/><circle cx=\"12\" cy=\"12\" r=\"2.5\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>", "restart": "<path d=\"M4 12a8 8 0 1 0 2.5-5.8\"/><path d=\"M4 4v4.5h4.5\"/>", "reload": "<path d=\"M20 12a8 8 0 1 1-2.5-5.8\"/><path d=\"M20 4v4.5h-4.5\"/>", "up": "<path d=\"M12 19V5M6 11l6-6 6 6\"/>", "down": "<path d=\"M12 5v14M6 13l6 6 6-6\"/>", "edit": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M14 6l4 4\"/>", "trash": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "copy": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3\"/>", "next": "<path d=\"M5 12h12M13 6l6 6-6 6\"/>", "wait": "<rect x=\"7\" y=\"5\" width=\"3.5\" height=\"14\" rx=\"1\" fill=\"currentColor\" stroke=\"none\"/><rect x=\"13.5\" y=\"5\" width=\"3.5\" height=\"14\" rx=\"1\" fill=\"currentColor\" stroke=\"none\"/>", "cont": "<path d=\"M4 6l7 6-7 6zM12 6l7 6-7 6z\" fill=\"currentColor\" stroke=\"none\"/>", "notes": "<path d=\"M5 4h14v16H5z\"/><path d=\"M9 9h6M9 13h6M9 17h3\"/>", "check": "<path d=\"M5 12.5l4.5 4.5L19 7.5\"/>", "dot": "<circle cx=\"12\" cy=\"12\" r=\"5\" fill=\"currentColor\" stroke=\"none\"/>"};
+const ICO = {"play": "<path d=\"M7 4.5v15l12-7.5z\" fill=\"currentColor\" stroke=\"none\"/>", "back": "<path d=\"M19 5v14L8 12z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M5 5v14\"/>", "skip": "<path d=\"M5 5v14l11-7z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M19 5v14\"/>", "pause": "<path d=\"M8 5v14M16 5v14\"/>", "fade": "<path d=\"M3 6c6 0 9 12 18 12\"/><path d=\"M3 18h18\" opacity=\".35\"/>", "stop": "<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"1.5\" fill=\"currentColor\" stroke=\"none\"/>", "lock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"9\" rx=\"2\"/><path d=\"M8 11V8a4 4 0 0 1 8 0v3\"/>", "unlock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"9\" rx=\"2\"/><path d=\"M8 11V8a4 4 0 0 1 7.5-2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"M20 20l-4.2-4.2\"/>", "grip": "<circle cx=\"9\" cy=\"6\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"6\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"9\" cy=\"12\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"12\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"9\" cy=\"18\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"18\" r=\"1.3\" fill=\"currentColor\"/>", "folder": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "note": "<path d=\"M9 18V6l10-2v12\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.5\"/><circle cx=\"16.5\" cy=\"16\" r=\"2.5\"/>", "silence": "<path d=\"M5 12h3M16 12h3\"/><circle cx=\"12\" cy=\"12\" r=\"2.5\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>", "restart": "<path d=\"M4 12a8 8 0 1 0 2.5-5.8\"/><path d=\"M4 4v4.5h4.5\"/>", "reload": "<path d=\"M20 12a8 8 0 1 1-2.5-5.8\"/><path d=\"M20 4v4.5h-4.5\"/>", "up": "<path d=\"M12 19V5M6 11l6-6 6 6\"/>", "down": "<path d=\"M12 5v14M6 13l6 6 6-6\"/>", "edit": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M14 6l4 4\"/>", "trash": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "copy": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3\"/>", "next": "<path d=\"M5 12h12M13 6l6 6-6 6\"/>", "wait": "<rect x=\"7\" y=\"5\" width=\"3.5\" height=\"14\" rx=\"1\" fill=\"currentColor\" stroke=\"none\"/><rect x=\"13.5\" y=\"5\" width=\"3.5\" height=\"14\" rx=\"1\" fill=\"currentColor\" stroke=\"none\"/>", "cont": "<path d=\"M4 6l7 6-7 6zM12 6l7 6-7 6z\" fill=\"currentColor\" stroke=\"none\"/>", "notes": "<path d=\"M5 4h14v16H5z\"/><path d=\"M9 9h6M9 13h6M9 17h3\"/>", "check": "<path d=\"M5 12.5l4.5 4.5L19 7.5\"/>", "dot": "<circle cx=\"12\" cy=\"12\" r=\"5\" fill=\"currentColor\" stroke=\"none\"/>", "film": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4\"/>", "image": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"2\"/><path d=\"M21 16l-5-5-8 8\"/>", "monitor": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"12\" rx=\"2\"/><path d=\"M8 20h8M12 16v4\"/>", "close": "<path d=\"M6 6l12 12M18 6L6 18\"/>"};
 function ico(n, s) { s = s || 20; return '<svg class="i" aria-hidden="true" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICO[n] || '') + '</svg>'; }
 
 // ====================== ajuste a la pantalla ======================
@@ -425,6 +438,10 @@ const parseTime = (t) => { t = String(t || '').trim(); if (!t) return 0; if (t.i
 const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const uid = () => Math.random().toString(36).slice(2, 10);
 const titleOf = EscenarioEngine.titleOf;
+const isVideo = (f) => /\.(mp4|m4v|webm|mov|mkv|ogv)$/i.test(String(f || ''));
+const isImage = (f) => /\.(jpe?g|png|webp|gif|avif)$/i.test(String(f || ''));
+const kindOf = (f) => isVideo(f) ? 'video' : isImage(f) ? 'image' : 'audio';
+const mediaUrl = (f) => '/audio/' + encodeURIComponent(f);
 // Curva del deslizador: arriba mueve muy poco (ajuste fino), abajo baja más rápido
 const posToVol = (x) => 1 - Math.pow(1 - x, 2);
 const volToPos = (v) => 1 - Math.sqrt(Math.max(0, 1 - v));
@@ -502,21 +519,22 @@ $('volSlider').addEventListener('input', () => {
   const now = Date.now(); if (now - volSendT > 70) { volSendT = now; cmd({ cmd: 'volume', value: v }); }
 });
 $('volSlider').addEventListener('change', () => { const v = Math.round(posToVol($('volSlider').value / 1000) * 100) / 100; cmd({ cmd: 'volume', value: v }); setTimeout(() => volDrag = false, 600); });
+$('negroBtn').onclick = () => cmd({ cmd: 'blackout' });
 document.querySelectorAll('[data-v]').forEach((b) => b.onclick = () => cmd({ cmd: 'volstep', value: Number(b.dataset.v) }));
 document.querySelectorAll('[data-g]').forEach((b) => b.onclick = () => { if (!st.file) return toast('No suena ninguna canción'); cmd({ cmd: 'gain', file: st.file, delta: Number(b.dataset.g) }); });
 
 // ====================== pintar Escenario ======================
-const icon = (it) => ico(it.type === 'song' ? 'note' : it.type === 'silence' ? 'silence' : 'folder', 18);
-const itemTitle = (it) => it.type === 'silence' ? (it.title || 'Silencio ' + it.seconds + ' s') : (it.title || titleOf(it.file) || 'Bloque');
+const icon = (it) => ico(it.type === 'song' ? (isVideo(it.file) ? 'film' : 'note') : it.type === 'silence' ? 'silence' : it.type === 'image' ? 'image' : 'folder', 18);
+const itemTitle = (it) => it.type === 'silence' ? (it.title || 'Silencio ' + it.seconds + ' s') : (it.title || titleOf(it.file) || (it.type === 'image' ? 'Imagen' : 'Bloque'));
 function itemLen(it) {
-  if (it.type === 'silence') return it.seconds;
+  if (it.type === 'silence' || it.type === 'image') return it.seconds;
   if (it.type !== 'song') return 0;
   const d = (st.durations || {})[it.file] || 0;
   return Math.max(0, (it.endAt > 0 ? Math.min(it.endAt, d || it.endAt) : d) - (it.startAt || 0));
 }
 
 function paintLive() {
-  const labels = { stopped: 'En espera', paused: 'En pausa', playing: st.mode === 'libre' ? 'Sonando (libre)' : 'Sonando', fading: 'Fundido de salida', silence: 'Silencio' };
+  const labels = { stopped: 'En espera', paused: 'En pausa', playing: (st.video ? 'Vídeo' : 'Sonando') + (st.mode === 'libre' ? ' (libre)' : ''), fading: 'Fundido de salida', silence: 'Silencio', image: 'Imagen en pantalla' };
   $('nowLabel').textContent = labels[st.status] || 'En espera'; document.body.classList.toggle('playing', st.status === 'playing');
   const idle = !st.status || st.status === 'stopped';
   $('nowTitle').textContent = idle ? (st.nextTitle ? 'Listo para: ' + st.nextTitle : 'Fin del guion') : (st.title || '—');
@@ -533,6 +551,8 @@ function paintLive() {
   nb.textContent = st.nextTitle ? (st.nextAfter === 'continue' ? 'al terminar sigue' : 'al terminar espera') : '';
   nb.className = 'badge ' + (st.nextAfter === 'continue' ? 'sigue' : 'espera');
   $('goBtn').disabled = !st.nextTitle;
+  $('vidBar').style.display = st.hasVisual ? '' : 'none';
+  $('negroBtn').classList.toggle('on', !!st.blackout); $('negroBtn').textContent = st.blackout ? 'Quitar negro' : 'Negro';
   $('goTxt').innerHTML = st.nextTitle ? ico('play', 30) + 'SIGUIENTE' : 'FIN DEL GUION';
   $('goSub').textContent = st.nextTitle ? st.nextTitle + (document.body.classList.contains('locked') ? ' · mantén pulsado' : '') : '';
   if (!volDrag && typeof st.volume === 'number') { $('volSlider').value = Math.round(volToPos(st.volume) * 1000); $('volVal').textContent = Math.round(st.volume * 100) + '%'; }
@@ -603,6 +623,7 @@ function describe(it) {
 }
 
 function renderEditor() {
+  try { paintIdle(); } catch {}
   $('showName').value = show.name || '';
   const box = $('edList'); box.innerHTML = '';
   if (!show.items.length) { box.innerHTML = '<div class="muted">Vacío. Añade canciones, silencios o bloques, o pulsa «Crear con todas las canciones».</div>'; return; }
@@ -674,6 +695,13 @@ function startDrag(handle, row, from) {
 $('showName').addEventListener('input', () => { show.name = $('showName').value; saveShow(); });
 function addItem(it) { show.items.push(Object.assign({ id: uid(), title: '', note: '', file: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false }, it)); saveShow(); renderEditor(); openSheet(show.items.length - 1); }
 $('addSong').onclick = () => { if (!songs.length) return toast('No hay canciones en el reproductor'); openPicker('add'); };
+$('addImage').onclick = () => { if (!songs.some((x) => isImage(x.file))) return toast('No hay imágenes en las carpetas del reproductor'); openPicker('addImage'); };
+function paintIdle() {
+  const f = show.idleImage, so = f && songs.find((x) => x.file === f);
+  $('idleCur').innerHTML = f ? '<b>' + esc(so ? so.title : titleOf(f)) + '</b><span>Imagen de espera</span>' : '<b>Negro</b><span>Sin imagen de espera</span>';
+}
+$('idleBtn').onclick = () => { if (!songs.some((x) => isImage(x.file))) return toast('No hay imágenes en las carpetas del reproductor'); openPicker('idle', (f) => { show.idleImage = f; saveShow(); paintIdle(); }); };
+$('idleDel').onclick = () => { show.idleImage = ''; saveShow(); paintIdle(); };
 $('addSilence').onclick = () => addItem({ type: 'silence', seconds: 10 });
 $('addBlock').onclick = () => addItem({ type: 'block', title: 'Bloque ' + (show.items.filter((i) => i.type === 'block').length + 1) });
 $('fillAll').onclick = () => {
@@ -689,10 +717,12 @@ function openSheet(i) {
   const it = show.items[i]; if (!it) return;
   const box = $('sheetBox');
   const seg = (name, val, opts) => '<div class="seg" data-seg="' + name + '">' + opts.map(([v, l]) => '<button data-v="' + v + '" class="' + (String(val) === String(v) ? 'on' : '') + '">' + l + '</button>').join('') + '</div>';
-  let html = '<div class="row" style="justify-content:space-between"><b style="font-size:18px">' + icon(it) + ' Editar ' + (it.type === 'song' ? 'canción' : it.type === 'silence' ? 'silencio' : 'bloque') + '</b><button class="btn" id="shClose">Cerrar</button></div>';
-  if (it.type === 'song') {
-    html += '<label class="f">Canción</label><input type="hidden" id="fFile" value="' + esc(it.file) + '"><div class="pickcur" id="fFileCur"></div><button class="btn" id="fFileBtn" style="width:100%">' + ico('search', 16) + ' Cambiar canción…</button>';
+  const vid = it.type === 'song' && isVideo(it.file);
+  let html = '<div class="row" style="justify-content:space-between"><b style="font-size:18px">' + icon(it) + ' Editar ' + (it.type === 'song' ? (vid ? 'vídeo' : 'canción') : it.type === 'silence' ? 'silencio' : it.type === 'image' ? 'imagen' : 'bloque') + '</b><button class="btn" id="shClose">Cerrar</button></div>';
+  if (it.type === 'song' || it.type === 'image') {
+    html += '<label class="f">' + (it.type === 'image' ? 'Imagen' : 'Canción o vídeo') + '</label><input type="hidden" id="fFile" value="' + esc(it.file) + '"><div class="pickcur" id="fFileCur"></div><button class="btn" id="fFileBtn" style="width:100%">' + ico('search', 16) + ' Cambiar…</button>';
     html += '<label class="f">Título en pantalla (opcional)</label><input type="text" id="fTitle" value="' + esc(it.title) + '" placeholder="' + esc(titleOf(it.file)) + '">';
+    if (it.type === 'image') html += '<label class="f">Tiempo en pantalla (segundos)</label><input type="number" id="fSeconds" min="1" step="1" value="' + it.seconds + '"><div class="muted" style="margin-top:4px">Con «Esperar mi orden» la imagen se queda hasta que pulses SIGUIENTE.</div>';
   } else if (it.type === 'silence') {
     html += '<label class="f">Duración del silencio (segundos)</label><input type="number" id="fSeconds" min="1" step="1" value="' + it.seconds + '">';
     html += '<label class="f">Título en pantalla (opcional)</label><input type="text" id="fTitle" value="' + esc(it.title) + '" placeholder="Silencio">';
@@ -703,6 +733,12 @@ function openSheet(i) {
   if (it.type !== 'block') {
     html += '<label class="f">Al terminar…</label>' + seg('after', it.after, [['wait', 'Esperar mi orden'], ['continue', 'Seguir sin parar']]);
     html += '<div class="muted" style="margin-top:4px">Esperar: se queda listo lo siguiente y lo lanzas tú. Seguir: arranca lo siguiente solo (canción o silencio).</div>';
+  }
+  if (it.type === 'image') {
+    html += '<div class="grid2"><div><label class="f">Fundido de entrada (s)</label><input type="number" id="fIn" min="0" step="0.5" value="' + it.fadeIn + '"></div><div><label class="f">Fundido de salida (s)</label><input type="number" id="fOut" min="0" step="0.5" value="' + it.fadeOut + '"></div></div>';
+  }
+  if (it.type === 'song' && !vid) {
+    html += '<label class="f">Visual de fondo en el proyector (opcional)</label><input type="hidden" id="fBg" value="' + esc(it.bg || '') + '"><div class="row" style="flex-wrap:nowrap"><div class="pickcur" id="fBgCur" style="flex:1;margin:0;min-width:0"></div><button class="btn" id="fBgBtn">Elegir vídeo</button><button class="btn" id="fBgDel" aria-label="Quitar visual de fondo">' + ico('close', 16) + '</button></div><div class="muted" style="margin-top:4px">Un vídeo sin sonido que se repite en el proyector mientras suena esta canción.</div>';
   }
   if (it.type === 'song') {
     const g = typeof show.gains[it.file] === 'number' ? Math.round(show.gains[it.file] * 100) : 100;
@@ -719,7 +755,13 @@ function openSheet(i) {
   if ($('fFileBtn')) {
     const paint = () => { const f = $('fFile').value, so = songs.find((x) => x.file === f); $('fFileCur').innerHTML = '<b>' + esc(so ? so.title : titleOf(f)) + '</b><span>' + esc(so ? songPlace(so) : 'No encontrada en el reproductor') + '</span>'; };
     paint();
-    $('fFileBtn').onclick = () => openPicker('replace', (f) => { $('fFile').value = f; paint(); });
+    $('fFileBtn').onclick = () => openPicker(it.type === 'image' ? 'pickImage' : 'replace', (f) => { $('fFile').value = f; paint(); });
+  }
+  if ($('fBgBtn')) {
+    const paintBg = () => { const f = $('fBg').value, so = f && songs.find((x) => x.file === f); $('fBgCur').innerHTML = f ? '<b>' + esc(so ? so.title : titleOf(f)) + '</b><span>' + esc(so ? songPlace(so) : 'No encontrado') + '</span>' : '<b>Ninguno</b><span>El proyector muestra la pantalla de espera</span>'; };
+    paintBg();
+    $('fBgBtn').onclick = () => { if (!songs.some((x) => isVideo(x.file))) return toast('No hay vídeos en las carpetas del reproductor'); openPicker('bg', (f) => { $('fBg').value = f; paintBg(); }); };
+    $('fBgDel').onclick = () => { $('fBg').value = ''; paintBg(); };
   }
   const close = () => { $('sheet').style.display = 'none'; renderEditor(); };
   $('shClose').onclick = close;
@@ -727,7 +769,9 @@ function openSheet(i) {
     it.title = ($('fTitle') && $('fTitle').value.trim()) || '';
     it.note = $('fNote').value;
     if (it.type !== 'block') it.after = segVal('after') === 'continue' ? 'continue' : 'wait';
-    if (it.type === 'silence') it.seconds = Math.max(1, Number($('fSeconds').value) || 5);
+    if (it.type === 'silence' || it.type === 'image') it.seconds = Math.max(1, Number($('fSeconds').value) || 5);
+    if (it.type === 'image') { it.file = $('fFile').value; it.fadeIn = Math.max(0, Number($('fIn').value) || 0); it.fadeOut = Math.max(0, Number($('fOut').value) || 0); }
+    if ($('fBg')) it.bg = $('fBg').value || '';
     if (it.type === 'song') {
       it.file = $('fFile').value;
       it.fadeIn = Math.max(0, Number($('fIn').value) || 0);
@@ -748,40 +792,53 @@ $('sheet').addEventListener('click', (e) => { if (e.target.id === 'sheet') { $('
 // ====================== buscador de canciones ======================
 const norm = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const songPlace = (x) => (x.folder || '') + (x.dir ? ' › ' + x.dir.replace(/\//g, ' › ') : '');
-function searchSongs(q, max) {
+function searchSongs(q, max, only) {
   const words = norm(q).split(/\s+/).filter(Boolean);
   const out = [];
   for (const x of songs) {
+    if (only && !only(x)) continue;
     if (words.length) { const hay = x._n || (x._n = norm(x.title + ' ' + (x.folder || '') + ' ' + (x.dir || '') + ' ' + x.file)); if (!words.every((w) => hay.includes(w))) continue; }
     out.push(x); if (out.length >= max) break;
   }
   return out;
 }
 let pkMode = 'add', pkCb = null;
+const PK = {
+  add:       { title: 'Añadir canciones o vídeos', only: (x) => !isImage(x.file), multi: true },
+  addImage:  { title: 'Añadir imágenes al guion', only: (x) => isImage(x.file), multi: true },
+  replace:   { title: 'Elegir canción o vídeo', only: (x) => !isImage(x.file) },
+  pickImage: { title: 'Elegir imagen', only: (x) => isImage(x.file) },
+  bg:        { title: 'Visual de fondo (vídeo)', only: (x) => isVideo(x.file) },
+  idle:      { title: 'Imagen de espera del proyector', only: (x) => isImage(x.file) },
+};
 function openPicker(mode, cb) {
   pkMode = mode; pkCb = cb || null;
-  $('pkTitle').textContent = mode === 'add' ? 'Añadir canciones al guion' : 'Elegir canción';
-  $('pkClose').textContent = mode === 'add' ? 'Listo' : 'Cancelar';
+  $('pkTitle').textContent = PK[mode].title;
+  $('pkClose').textContent = PK[mode].multi ? 'Listo' : 'Cancelar';
   $('pkQ').value = ''; $('picker').style.display = 'flex'; renderPicker();
   setTimeout(() => $('pkQ').focus(), 50);
 }
 function renderPicker() {
-  const q = $('pkQ').value.trim(), list = searchSongs(q, 150), box = $('pkList');
-  const inShow = new Set(show.items.filter((i) => i.type === 'song').map((i) => i.file));
-  $('pkInfo').textContent = !songs.length ? 'No hay canciones en el reproductor.' : list.length ? (q ? '' : songs.length + ' canciones en el reproductor. Escribe para buscar.') + (list.length >= 150 ? ' Se muestran las primeras 150.' : '') : 'Nada coincide con «' + q + '».';
+  const cfg = PK[pkMode], q = $('pkQ').value.trim(), list = searchSongs(q, 150, cfg.only), box = $('pkList');
+  const total = songs.filter(cfg.only).length;
+  const inShow = new Set(show.items.filter((i) => i.type === 'song' || i.type === 'image').map((i) => i.file));
+  $('pkInfo').textContent = !total ? 'No hay archivos de este tipo en el reproductor.' : list.length ? (q ? '' : total + ' disponibles. Escribe para buscar.') + (list.length >= 150 ? ' Se muestran los primeros 150.' : '') : 'Nada coincide con «' + q + '».';
   box.innerHTML = '';
-  for (const x of list) {
+  list.forEach((x, n) => {
     const row = document.createElement('div'); row.className = 'pk';
-    const d = (st.durations || {})[x.file];
-    row.innerHTML = '<span class="ok">' + (inShow.has(x.file) ? ico('check', 18) : '') + '</span><span class="t"><b></b><span></span></span><span class="muted">' + (d ? fmt(d) : '') + '</span>';
+    const d = (st.durations || {})[x.file], k = kindOf(x.file);
+    const thumb = k === 'image' ? '<img class="th" loading="lazy" alt="" src="' + esc(mediaUrl(x.file)) + '">'
+      : k === 'video' ? (n < 40 ? '<video class="th" muted playsinline preload="metadata" src="' + esc(mediaUrl(x.file)) + '#t=1"></video>' : '<span class="th">' + ico('film', 18) + '</span>') : '';
+    row.innerHTML = '<span class="ok">' + (inShow.has(x.file) ? ico('check', 18) : '') + '</span>' + thumb + '<span class="t"><b></b><span></span></span><span class="muted">' + (k === 'video' ? 'vídeo ' : '') + (d ? fmt(d) : '') + '</span>';
     row.querySelector('b').textContent = x.title; row.querySelector('.t span').textContent = songPlace(x);
     row.onclick = () => {
-      if (pkMode === 'replace') { $('picker').style.display = 'none'; if (pkCb) pkCb(x.file); return; }
-      show.items.push({ id: uid(), type: 'song', file: x.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false });
+      if (!cfg.multi) { $('picker').style.display = 'none'; if (pkCb) pkCb(x.file); return; }
+      if (isImage(x.file)) show.items.push({ id: uid(), type: 'image', file: x.file, title: '', note: '', seconds: 10, after: 'wait', fadeIn: 0.5, fadeOut: 0.5, startAt: 0, endAt: 0, loop: false });
+      else show.items.push({ id: uid(), type: 'song', file: x.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false });
       saveShow(); row.querySelector('.ok').innerHTML = ico('check', 18); toast('«' + x.title + '» añadida al final', true);
     };
     box.appendChild(row);
-  }
+  });
 }
 $('pkQ').addEventListener('input', renderPicker);
 $('pkClose').onclick = () => { $('picker').style.display = 'none'; renderEditor(); };
@@ -824,7 +881,8 @@ function renderSongs() {
     const d = (st.durations || {})[s.file];
     const row = document.createElement('div'); row.className = 's' + (st.file === s.file ? ' on' : '');
     const inShow = show.items.some((i) => i.type === 'song' && i.file === s.file);
-    row.innerHTML = '<button class="lockable" aria-label="Reproducir">' + ico('play', 16) + '</button><span class="ti">' + esc(s.title) + ' <span class="muted">' + (d ? fmt(d) : '') + (inShow ? '' : ' · <span class="nuevo">fuera del guion</span>') + '</span></span><button class="lockable sig" title="Añadir al guion como siguiente">' + ico('plus', 15) + ' Sig.</button><button class="lockable">−1</button><span class="g">' + g + '%</span><button class="lockable">+1</button>';
+    const kk = kindOf(s.file);
+    row.innerHTML = '<button class="lockable" aria-label="Reproducir">' + ico('play', 16) + '</button><span class="ti">' + (kk !== 'audio' ? '<span class="kd">' + ico(kk === 'video' ? 'film' : 'image', 15) + '</span>' : '') + esc(s.title) + ' <span class="muted">' + (d ? fmt(d) : '') + (inShow ? '' : ' · <span class="nuevo">fuera del guion</span>') + '</span></span><button class="lockable sig" title="Añadir al guion como siguiente">' + ico('plus', 15) + ' Sig.</button><button class="lockable">−1</button><span class="g">' + g + '%</span><button class="lockable">+1</button>';
     const [pb, add, minus, plus] = row.querySelectorAll('button');
     pb.onclick = () => cmd({ cmd: 'play', file: s.file });
     add.onclick = () => addAsNext(s);
@@ -838,7 +896,7 @@ function renderSongs() {
 $('songsQ').addEventListener('input', () => renderSongs());
 // Añadir una canción al guion justo como la siguiente, en caliente, sin parar lo que suena
 async function addAsNext(s) {
-  const it = { id: uid(), type: 'song', file: s.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false };
+  const it = { id: uid(), type: isImage(s.file) ? 'image' : 'song', file: s.file, title: '', note: '', seconds: isImage(s.file) ? 10 : 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false };
   const curK = st.itemId ? show.items.findIndex((i) => i.id === st.itemId) : -1;
   const pos = curK >= 0 ? curK + 1 : (st.nextIndex >= 0 ? st.nextIndex : show.items.length);
   show.items.splice(pos, 0, it);
