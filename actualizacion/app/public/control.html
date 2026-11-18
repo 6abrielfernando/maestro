@@ -738,7 +738,7 @@ function openSheet(i) {
     html += '<div class="grid2"><div><label class="f">Fundido de entrada (s)</label><input type="number" id="fIn" min="0" step="0.5" value="' + it.fadeIn + '"></div><div><label class="f">Fundido de salida (s)</label><input type="number" id="fOut" min="0" step="0.5" value="' + it.fadeOut + '"></div></div>';
   }
   if (it.type === 'song' && !vid) {
-    html += '<label class="f">Visual de fondo en el proyector (opcional)</label><input type="hidden" id="fBg" value="' + esc(it.bg || '') + '"><div class="row" style="flex-wrap:nowrap"><div class="pickcur" id="fBgCur" style="flex:1;margin:0;min-width:0"></div><button class="btn" id="fBgBtn">Elegir vídeo</button><button class="btn" id="fBgDel" aria-label="Quitar visual de fondo">' + ico('close', 16) + '</button></div><div class="muted" style="margin-top:4px">Un vídeo sin sonido que se repite en el proyector mientras suena esta canción.</div>';
+    html += '<label class="f">Visual de fondo en el proyector (opcional)</label><input type="hidden" id="fBg" value="' + esc(it.bg || '') + '"><div class="row" style="flex-wrap:nowrap"><div class="pickcur" id="fBgCur" style="flex:1;margin:0;min-width:0"></div><button class="btn" id="fBgBtn">Elegir</button><button class="btn" id="fBgDel" aria-label="Quitar visual de fondo">' + ico('close', 16) + '</button></div><div class="muted" style="margin-top:4px">Una imagen fija, o un vídeo sin sonido que se repite, en el proyector mientras suena esta canción.</div>';
   }
   if (it.type === 'song') {
     const g = typeof show.gains[it.file] === 'number' ? Math.round(show.gains[it.file] * 100) : 100;
@@ -760,7 +760,7 @@ function openSheet(i) {
   if ($('fBgBtn')) {
     const paintBg = () => { const f = $('fBg').value, so = f && songs.find((x) => x.file === f); $('fBgCur').innerHTML = f ? '<b>' + esc(so ? so.title : titleOf(f)) + '</b><span>' + esc(so ? songPlace(so) : 'No encontrado') + '</span>' : '<b>Ninguno</b><span>El proyector muestra la pantalla de espera</span>'; };
     paintBg();
-    $('fBgBtn').onclick = () => { if (!songs.some((x) => isVideo(x.file))) return toast('No hay vídeos en las carpetas del reproductor'); openPicker('bg', (f) => { $('fBg').value = f; paintBg(); }); };
+    $('fBgBtn').onclick = () => { if (!songs.some((x) => isVideo(x.file) || isImage(x.file))) return toast('No hay imágenes ni vídeos en las carpetas del reproductor'); openPicker('bg', (f) => { $('fBg').value = f; paintBg(); }); };
     $('fBgDel').onclick = () => { $('fBg').value = ''; paintBg(); };
   }
   const close = () => { $('sheet').style.display = 'none'; renderEditor(); };
@@ -808,7 +808,7 @@ const PK = {
   addImage:  { title: 'Añadir imágenes al guion', only: (x) => isImage(x.file), multi: true },
   replace:   { title: 'Elegir canción o vídeo', only: (x) => !isImage(x.file) },
   pickImage: { title: 'Elegir imagen', only: (x) => isImage(x.file) },
-  bg:        { title: 'Visual de fondo (vídeo)', only: (x) => isVideo(x.file) },
+  bg:        { title: 'Visual de fondo (imagen o vídeo)', only: (x) => isVideo(x.file) || isImage(x.file) },
   idle:      { title: 'Imagen de espera del proyector', only: (x) => isImage(x.file) },
 };
 function openPicker(mode, cb) {

@@ -1,15 +1,15 @@
 {
- "version": "1.4.0",
- "notas": "Vídeo e imágenes al proyector: salida de vídeo, botón Negro, pantalla de espera y visuales de fondo",
+ "version": "1.4.1",
+ "notas": "El visual de fondo de una canción admite también una imagen fija",
  "files": {
   "server.js": "eb52e033ba27f01f509349924a9c65fcaa92503957ab0a3fb30bd2ff91841831",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "78b591400c56b7b67b8cb3b2b8a8e65e9093897f02ce0878e6b5405c68620fa7",
-  "LEEME.txt": "6e3620af9a59073f9d32fe53e1d141e514a60d31e6e30f64a5c24980887405dd",
+  "version.txt": "7d072b48526b023950e4c48db01e8c273554a6401119f5691e7589ba9bc65d9d",
+  "LEEME.txt": "e590e016b069c7251bd3b889303f9705044b4498c33c51843d67dbac294656a0",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
-  "public/control.html": "33ab7f6ac59658a81dbc2971e41feb5ed22d999b45aff462ed3f2064865d9048",
-  "public/engine.js": "d08a21064cdd6ba9a2eecff81e3fde20fafcd2ffde24267228b05e1fc9d315bc",
+  "public/control.html": "1196879a9dd4f3c1f9c74a11a22a862b3417538ecbdaa0e52701f142a40f249b",
+  "public/engine.js": "0c90665603e5aab6a2982ab29f2d4288b544814118933a83896450d8e71fbd5c",
   "public/favicon.ico": "23baa002e42e5327bf38a264dd329a20e7b867e657df2181900e90fac105266c",
   "public/favicon.png": "6fd0963702659dfacba81ebedad3bafd453af7d428e3d4b225b6b5fb8dc5dad4",
   "public/fuentes-licencia.txt": "917115259b8ec6484e17e5fc404887488d42df70c03e929e2529db653b4cffb5",
@@ -24,7 +24,7 @@
   "public/salida.html": "f05ba17225dc6c5140a087b27bb312b1a8d0290100d4251468e37f6587b086a1"
  },
  "apk": {
-  "version": "1.4.0",
+  "version": "1.4.1",
   "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
  }
 }

@@ -88,7 +88,7 @@
       const it = current && current.item;
       if (current && current.kind === 'song' && isVideo(it.file)) return { kind: 'video', el: audio, file: it.file };
       if (current && current.kind === 'image') return { kind: 'image', url: (io.metaUrl || io.songUrl)(it.file), file: it.file };
-      if (current && current.kind === 'song' && it.bg) return { kind: 'bg', url: (io.metaUrl || io.songUrl)(it.bg), file: it.bg };
+      if (current && current.kind === 'song' && it.bg) return { kind: isImage(it.bg) ? 'image' : 'bg', url: (io.metaUrl || io.songUrl)(it.bg), file: it.bg };
       if (show.idleImage) return { kind: 'idle', url: (io.metaUrl || io.songUrl)(show.idleImage), file: show.idleImage };
       return { kind: 'none' };
     }

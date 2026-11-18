@@ -98,7 +98,7 @@ VÍDEO E IMÁGENES (PROYECTOR)
 - El sonido de los vídeos sale por el mismo sitio que las canciones.
 - Botón «Negro»: apaga la imagen al instante (la música sigue). Está en el control y en el reproductor.
 - Pantalla de espera: en Guion, «Proyector cuando no hay nada» → elige una imagen (o negro).
-- Visual de fondo: en una canción, «Visual de fondo» → un vídeo sin sonido en bucle mientras suena.
+- Visual de fondo: en una canción, «Visual de fondo» → una imagen fija, o un vídeo sin sonido en bucle, mientras suena.
 - Los fundidos de entrada y salida también funden la imagen a negro.
 - Android: conecta el móvil al proyector por cable USB-C a HDMI o duplica la pantalla (Chromecast).
   En el reproductor, «4 · Proyector». Usa otro aparato como control.
