@@ -1,11 +1,11 @@
 {
- "version": "1.2.0",
- "notas": "Varias carpetas de música, buscador, varios shows, arrastrar en el guion y marca AVI Music",
+ "version": "1.2.1",
+ "notas": "Ventana sin marco con botones integrados",
  "files": {
   "server.js": "e9e6be9450e6b9cf0d32216b7dc900dae52cabb805064d2a7c8838043580257f",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "1e5b51cde515396a9fa762909cf8ca6584ccc564b325d2eebeea76175fe95c4d",
+  "version.txt": "6cf4e084b47f33c9b02ef79279d157833868f8f70514169a768be353ee328fea",
   "LEEME.txt": "95efa29f726cb7ee0a6e0c71d378a3ca3aa5b0c60b954c1ebbcbd0df35323ceb",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
   "public/control.html": "e824f7a29aac77d6179317e6ac2944cde864d10decf04054bfa7d12b9a4d4198",
@@ -14,7 +14,7 @@
   "public/favicon.png": "6fd0963702659dfacba81ebedad3bafd453af7d428e3d4b225b6b5fb8dc5dad4",
   "public/icono-180.png": "eaf8871583ddcccc20d7bef4116bea29dfdceda862f66dc998c354d18e4ca4c0",
   "public/icono-512.png": "c590f32de3965d27ba1b7631074951e0792c8c0f20c1da487e294218b52400c4",
-  "public/player.html": "2107b51e371bf7c91e2268a770874782b439218f0c1cabf3137bff26ea65692d",
+  "public/player.html": "07c04836317b55957ac970975c37ccecdc925d21e9146cb38dae497eac74df3e",
   "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780"
  },
  "apk": {

@@ -70,10 +70,23 @@
   .top .mt { font-size: 30px; }
   .top .by { font-size: 11px; margin-top: 6px; }
   .top .by img { height: 12px; }
+  /* Programa con ventana propia: sin marco; esta franja superior sirve para arrastrar la ventana */
+  #appbar { display: none; }
+  body.app #appbar { display: flex; align-items: center; position: fixed; top: 0; left: 0; right: 0; height: 38px; z-index: 30;
+    background: #111; -webkit-app-region: drag; user-select: none; padding: 0 150px 0 16px; font-size: 12px; color: #777; letter-spacing: .08em; text-transform: uppercase; }
+  body.app-mac #appbar { padding: 0 16px 0 84px; }
+  body.app #appbar button, body.app #appbar a { -webkit-app-region: no-drag; }
+  body.app { padding-top: 62px; }
+  body.app::-webkit-scrollbar { width: 10px; } body.app::-webkit-scrollbar-track { background: #111; }
+  body.app::-webkit-scrollbar-thumb { background: #333; border-radius: 6px; border: 2px solid #111; }
+  html:has(body.app)::-webkit-scrollbar { width: 10px; } html:has(body.app)::-webkit-scrollbar-track { background: #111; }
+  html:has(body.app)::-webkit-scrollbar-thumb { background: #333; border-radius: 6px; border: 2px solid #111; }
+  body.app .top { margin-top: -18px; }
 </style>
 </head>
 <body>
   <div id="conn" class="ko">Conectando…</div>
+  <div id="appbar">Maestro · Reproductor</div>
   <div class="top"><div class="marca"><span class="mt">Maestro</span><span class="by">by <img src="/avi.png" alt="AVI"> Music</span></div></div>
   <div class="wrap">
     <div>
@@ -245,7 +258,7 @@ $('unlockBtn').onclick = () => {
 };
 // Dentro del programa Maestro (ventana propia) el sonido ya está permitido: no hace falta pulsar
 const IN_APP = /Electron/.test(navigator.userAgent);
-if (IN_APP) { $('unlockBtn').click(); document.title = 'Maestro'; $('plHead').textContent = 'Reproductor · deja esta ventana abierta'; }
+if (IN_APP) { document.body.classList.add('app', /Mac/.test(navigator.platform) ? 'app-mac' : 'app-win'); $('unlockBtn').click(); document.title = 'Maestro'; $('plHead').textContent = 'Reproductor · deja esta ventana abierta'; }
 
 // ---------- carpeta de canciones ----------
 const fmtSize = (b) => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
