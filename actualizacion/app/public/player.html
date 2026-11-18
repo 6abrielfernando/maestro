@@ -90,18 +90,69 @@
   #selfCtl .sb b { color: #eee; flex: 1; }
   #selfCtl iframe { flex: 1; border: 0; width: 100%; background: #0d0d0d; }
   .btn.ctlmode { background: #23303a; color: #9ad; }
+  @font-face { font-family: 'Inter'; src: url(inter.woff2) format('woff2'); font-weight: 100 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Inter'; src: url(inter-ext.woff2) format('woff2'); font-weight: 100 900; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'JetBrains Mono'; src: url(jbmono.woff2) format('woff2'); font-weight: 100 800; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'JetBrains Mono'; src: url(jbmono-ext.woff2) format('woff2'); font-weight: 100 800; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+  /* ================= DISEÑO «CONSOLA» (Maestro 1.3) ================= */
+  :root { --verde: #1FBF5B; --rojo: #E0252D; --ambar: #F2A93B; --bg: #0B0C0E; --card: #15171B; --card2: #1D2026; --line: #2A2E35; --txt: #ECEDEF; --muted: #8B9099; --faint: #5C626C;
+    --ui: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif; --num: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
+  body { background: var(--bg); color: var(--txt); font-family: var(--ui); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+  h1 { font-size: 11px; letter-spacing: .14em; font-weight: 600; color: var(--muted); }
+  #plHead { display: flex; align-items: center; gap: 8px; color: var(--txt); }
+  #plHead::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+  body.sonando #plHead::before { background: var(--rojo); box-shadow: 0 0 0 3px rgba(224,37,45,.2); }
+  #title { font-weight: 800; letter-spacing: -.01em; font-size: clamp(24px, 3.2vw, 38px); margin-top: 12px; }
+  #bigT { font-family: var(--num); font-weight: 700; letter-spacing: -.03em; font-size: clamp(64px, 9vw, 120px); line-height: .95; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  #status { color: var(--muted); font-size: 15px; }
+  .bar { height: 6px; background: var(--card2); border-radius: 3px; }
+  .bar > div { background: var(--rojo); }
+  #time { font-family: var(--num); font-size: 13px; color: var(--muted); }
+  #conn { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); font-weight: 600; font-size: 12px; color: var(--txt); z-index: 5; }
+  #conn::before, #conn.ok::before, #conn.ko::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--rojo); }
+  #conn.ok::before { background: var(--verde); box-shadow: 0 0 0 3px rgba(31,191,91,.18); }
+  body.app #conn { top: 56px; right: 24px; }
+  #qr { border-radius: 10px; }
+  #qr img { width: 128px; height: 128px; }
+  @media (min-width: 560px) { #join { flex-wrap: nowrap; } }
+  #join .s { display: block; border: 0; padding: 0; margin-top: 8px; font-size: 12px; line-height: 1.5; }
+  #join b { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+  #join .u { font-family: var(--num); font-size: 17px; font-weight: 600; color: var(--txt); }
+  #join .s { color: var(--muted); }
+  .btn { background: var(--card2); border: 1px solid var(--line); border-radius: 10px; color: var(--txt); font-weight: 600; display: inline-flex; align-items: center; gap: 7px; }
+  .btn.verde { background: var(--txt); border-color: var(--txt); color: var(--bg); }
+  .btn.ctlmode { background: var(--card2); color: var(--txt); }
+  .fo { border-bottom-color: var(--line); } .fo .ic { color: var(--muted); font-size: 0; }
+  .fo .t span { font-family: var(--num); color: var(--muted); } .fo.bad .t span { color: var(--ambar); }
+  .s { border-bottom-color: var(--line); } .s .n { color: var(--faint); font-family: var(--num); font-size: 12px; } .s .t span { color: var(--muted); } .s .d { font-family: var(--num); color: var(--muted); font-size: 12px; }
+  .s.on b { color: var(--verde); }
+  #songSearch { background: var(--bg); border: 1px solid var(--line); color: var(--txt); font-family: var(--ui); }
+  #songSearch:focus { outline: 2px solid #4C8DFF; outline-offset: 1px; }
+  .empty { color: var(--muted); }
+  #upd .info { color: var(--muted); } #upd .info b { color: var(--txt); } #upd.nueva { border-color: var(--verde); } #upd.nueva .info b { color: var(--verde); }
+  #toast { background: var(--card2); border: 1px solid var(--line); color: var(--txt); }
+  #unlock button { background: var(--verde); color: #04170B; border-radius: 14px; font-weight: 800; }
+  #unlock p { color: var(--muted); }
+  #drop { background: rgba(31,191,91,.12); border-color: var(--verde); }
+  .marca .mt { color: var(--txt); } .marca .by { color: var(--muted); letter-spacing: .16em; font-weight: 600; }
+  body.app #appbar { background: var(--bg); border-bottom: 1px solid var(--line); color: var(--muted); font-weight: 600; letter-spacing: .14em; }
+  #selfCtl .sb { background: var(--bg); border-bottom: 1px solid var(--line); }
+  #selfCtl .sb b { font-weight: 600; letter-spacing: .02em; }
 </style>
 </head>
 <body>
   <div id="conn" class="ko">Conectando…</div>
-  <div id="selfCtl"><div class="sb"><b>🎛 Modo control · el sonido sale de este aparato</b><button class="btn" id="selfCtlBack">‹ Volver al reproductor</button></div><iframe id="selfCtlFrame" title="Control"></iframe></div>
+  <div id="selfCtl"><div class="sb"><b>Modo control · el sonido sale de este aparato</b><button class="btn" id="selfCtlBack"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0"><path d="M15 6l-6 6 6 6"/></svg>Volver al reproductor</button></div><iframe id="selfCtlFrame" title="Control"></iframe></div>
   <div id="appbar">Maestro · Reproductor</div>
   <div class="top"><div class="marca"><span class="mt">Maestro</span><span class="by">by <img src="/avi.png" alt="AVI"> Music</span></div></div>
   <div class="wrap">
     <div>
       <div class="card">
-        <div class="row" style="justify-content:space-between;align-items:center"><h1 id="plHead" style="margin:0">Reproductor · deja esta pestaña abierta</h1><button class="btn ctlmode" id="selfCtlBtn" title="Usar el control remoto en este mismo aparato">🎛 Modo control</button></div>
+        <div class="row" style="justify-content:space-between;align-items:center"><h1 id="plHead" style="margin:0">Reproductor · deja esta pestaña abierta</h1><button class="btn ctlmode" id="selfCtlBtn" title="Usar el control remoto en este mismo aparato"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0"><path d="M5 4v16M12 4v16M19 4v16"/><rect x="3" y="13" width="4" height="3" rx="1" fill="currentColor"/><rect x="10" y="7" width="4" height="3" rx="1" fill="currentColor"/><rect x="17" y="11" width="4" height="3" rx="1" fill="currentColor"/></svg>Modo control</button></div>
         <div id="title">—</div>
+        <div id="bigT">0:00</div>
         <div id="status">Esperando órdenes del control</div>
         <div class="bar"><div id="prog"></div></div>
         <div id="time">0:00 / 0:00</div>
@@ -127,8 +178,8 @@
       <div class="row" style="justify-content:space-between">
         <h1 style="margin:0">Carpetas de música</h1>
         <div class="row">
-          <button class="btn verde" id="addFolder">＋ Vincular carpeta</button>
-          <button class="btn" id="reloadBtn" title="Volver a leer las carpetas">⟳</button>
+          <button class="btn verde" id="addFolder"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0"><path d="M12 5v14M5 12h14"/></svg>Vincular carpeta</button>
+          <button class="btn" id="reloadBtn" title="Volver a leer las carpetas" aria-label="Volver a leer las carpetas"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4.5h-4.5"/></svg></button>
         </div>
       </div>
       <div id="folders"></div>
@@ -209,6 +260,8 @@ const engine = EscenarioEngine.Engine({
       + (st.nextTitle ? ' · Siguiente: ' + st.nextTitle : '');
     $('prog').style.width = st.duration ? (100 * st.position / st.duration) + '%' : '0';
     $('time').textContent = fmt(st.position) + ' / ' + fmt(st.duration);
+    $('bigT').textContent = st.duration ? '−' + fmt(Math.max(0, st.duration - st.position)) : (st.status === 'silence' && st.remaining ? fmt(st.remaining) : '0:00');
+    document.body.classList.toggle('sonando', st.status === 'playing');
   },
 });
 
@@ -292,7 +345,7 @@ async function loadFolder() {
   const box = $('folders'); box.innerHTML = '';
   ((f && f.folders) || []).forEach((x) => {
     const row = document.createElement('div'); row.className = 'fo' + (x.ok ? '' : ' bad');
-    row.innerHTML = '<span class="ic">' + (x.fixed ? '🎵' : '📁') + '</span><span class="t"><b></b><span></span></span>'
+    row.innerHTML = '<span class="ic"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class="t"><b></b><span></span></span>'
       + (f.local ? '<button class="btn" data-a="open">Abrir</button>' : '') + (f.local && !x.fixed ? '<button class="btn" data-a="del" title="Desvincular (no borra nada)">Quitar</button>' : '');
     row.querySelector('b').textContent = x.name + ' · ' + x.count + (x.count === 1 ? ' canción' : ' canciones');
     row.querySelector('.t span').textContent = x.ok ? (x.path || '') : 'No se encuentra: ' + (x.path || '') + ' (¿disco desconectado?)';
@@ -316,7 +369,7 @@ function renderFolder() {
   const q = norm($('songSearch').value.trim()), words = q.split(/\s+/).filter(Boolean);
   const list = words.length ? folderSongs.filter((s) => { const h = norm(s.title + ' ' + s.folder + ' ' + s.dir + ' ' + s.file); return words.every((w) => h.includes(w)); }) : folderSongs;
   $('songCount').textContent = '· ' + (q ? list.length + ' de ' : '') + folderSongs.length;
-  if (!folderSongs.length) { box.innerHTML = '<div class="empty">No hay canciones. Pulsa «＋ Vincular carpeta» y elige la carpeta donde tienes tu música, o arrastra archivos a esta ventana.</div>'; return; }
+  if (!folderSongs.length) { box.innerHTML = '<div class="empty">No hay canciones. Pulsa «Vincular carpeta» y elige la carpeta donde tienes tu música, o arrastra archivos a esta ventana.</div>'; return; }
   if (!list.length) { box.innerHTML = '<div class="empty">Nada coincide con la búsqueda.</div>'; return; }
   list.slice(0, 300).forEach((s, i) => {
     const row = document.createElement('div'); row.className = 's' + (s.file === playingFile ? ' on' : '');

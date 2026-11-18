@@ -188,6 +188,93 @@
   header .marca .mt { font-size: 19px; }
   header .marca .by { margin-top: 3px; font-size: 9px; }
   header .marca .by img { height: 9px; }
+
+  /* ================= DISEÑO «CONSOLA» (Maestro 1.3) ================= */
+  @font-face { font-family: 'Inter'; src: url(inter.woff2) format('woff2'); font-weight: 100 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Inter'; src: url(inter-ext.woff2) format('woff2'); font-weight: 100 900; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'JetBrains Mono'; src: url(jbmono.woff2) format('woff2'); font-weight: 100 800; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'JetBrains Mono'; src: url(jbmono-ext.woff2) format('woff2'); font-weight: 100 800; font-display: swap; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  :root { --verde: #1FBF5B; --rojo: #E0252D; --ambar: #F2A93B; --azul: #4C8DFF; --bg: #0B0C0E; --card: #15171B; --card2: #1D2026; --line: #2A2E35; --txt: #ECEDEF; --muted: #8B9099; --faint: #5C626C; --avi: #E0252D;
+    --ui: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif; --num: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
+  html, body { background: var(--bg); color: var(--txt); font-family: var(--ui); }
+  svg.i { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+  header { background: var(--bg); border-bottom: 1px solid var(--line); padding: calc(10px + env(safe-area-inset-top)) 14px 0; row-gap: 10px; }
+  .marca .mt { color: var(--txt); font-weight: 800; letter-spacing: -.01em; }
+  .marca .by { color: var(--muted); letter-spacing: .16em; font-weight: 600; }
+  .tabs { gap: 22px; }
+  .tab { padding: 10px 2px 11px; border-radius: 0; background: transparent; color: var(--muted); font-weight: 600; border-bottom: 2px solid transparent; }
+  .tab.on { background: transparent; color: var(--txt); border-bottom-color: var(--avi); }
+  .clock { color: var(--muted); gap: 14px; }
+  .clock b { color: var(--txt); font-family: var(--num); font-weight: 600; }
+  .clock .ck { display: inline-flex; align-items: center; gap: 5px; }
+  #conn { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; font-weight: 600; font-size: 12px; color: var(--txt); }
+  #conn::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--rojo); }
+  #conn.ok::before { background: var(--verde); box-shadow: 0 0 0 3px rgba(31,191,91,.18); } #conn.warn::before { background: var(--ambar); }
+  #conn.ok, #conn.ko, #conn.warn { color: var(--txt); }
+  #lockBtn { display: inline-flex; align-items: center; gap: 6px; background: var(--card2); border: 1px solid var(--line); color: var(--muted); border-radius: 10px; padding: 8px 10px; }
+  body.locked #lockBtn { background: var(--ambar); border-color: var(--ambar); color: #1a1205; }
+  .page { padding: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .muted { color: var(--muted); }
+  .label { font-size: 11px; letter-spacing: .14em; font-weight: 600; color: var(--muted); }
+  .btn { background: var(--card2); border: 1px solid var(--line); border-radius: 10px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn.verde { background: var(--verde); border-color: var(--verde); color: #04170B; } .btn.rojo { background: var(--rojo); border-color: var(--rojo); color: #fff; }
+  .btn.ambar { background: var(--card2); border-color: var(--line); color: var(--txt); } .btn.azul { background: var(--azul); border-color: var(--azul); color: #fff; }
+  #nowTitle { font-weight: 800; letter-spacing: -.01em; }
+  #nowLabel { display: flex; align-items: center; gap: 8px; color: var(--txt); }
+  #nowLabel::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+  body.playing #nowLabel::before { background: var(--avi); box-shadow: 0 0 0 3px rgba(224,37,45,.2); }
+  .bigtime { font-family: var(--num); font-weight: 700; letter-spacing: -.03em; color: var(--txt); }
+  .bigtime.alerta { color: var(--rojo); } .bigtime.espera { color: var(--ambar); }
+  .prog { height: 6px; background: var(--card2); border-radius: 3px; }
+  .prog > div { background: var(--avi); }
+  .times { font-family: var(--num); color: var(--muted); font-size: 12px; }
+  #nowNote, #nextNote { background: var(--bg); border: 1px solid var(--line); color: var(--txt); }
+  .badge { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 4px 8px; }
+  .badge.sigue { background: transparent; border-color: var(--ambar); color: var(--ambar); } .badge.espera { background: transparent; border-color: var(--line); color: var(--muted); }
+  #nextTitle { font-weight: 600; }
+  .go { border-radius: 14px; background: var(--verde); color: #04170B; font-weight: 800; letter-spacing: .01em; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .go #goTxt { display: inline-flex; align-items: center; gap: 12px; }
+  .go small { color: #0B3D1C; opacity: 1; font-weight: 600; }
+  .go:disabled { background: var(--card2); color: var(--faint); }
+  .transport .btn { flex-direction: column; gap: 6px; color: var(--txt); }
+  .transport .btn small { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: 1; color: var(--muted); }
+  .transport .btn.rojo { background: var(--rojo); border-color: var(--rojo); color: #fff; } .transport .btn.rojo small { color: #fff; }
+  .vol .val { font-family: var(--num); font-weight: 700; }
+  input[type=range] { accent-color: var(--txt); }
+  .cues .cue { background: transparent; border: 1px solid transparent; border-radius: 10px; }
+  .cue .n { color: var(--faint); font-family: var(--num); font-size: 12px; }
+  .cue .ic { color: var(--muted); display: flex; justify-content: center; }
+  .cue .ln { color: var(--muted); font-family: var(--num); font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
+  .cue.now { background: var(--card2); border-color: var(--avi); }
+  .cue.next { border-color: var(--ambar); }
+  .cue.block { color: var(--muted); }
+  .cue .fireBtn { background: var(--card2); border: 1px solid var(--line); display: inline-flex; align-items: center; justify-content: center; color: var(--txt); }
+  .tag { font-size: 10px; letter-spacing: .12em; color: var(--ambar); }
+  .ed .it { border-bottom-color: var(--line); }
+  .ed .it.block { background: var(--card2); }
+  .ed .it button { background: var(--card2); border: 1px solid var(--line); color: var(--muted); display: inline-flex; align-items: center; justify-content: center; }
+  .ed .it button.drag { background: var(--card2); color: var(--txt); }
+  .ed .it.ghost { background: var(--card2); border: 1px solid var(--avi); }
+  .ed .it.ph { border-color: var(--avi); }
+  .ed .it .ti span, .pk .t span, .songs .s .ti small { color: var(--muted); }
+  input[type=text], input[type=number], select, textarea, input.q { background: var(--bg); border: 1px solid var(--line); color: var(--txt); font-family: var(--ui); }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--azul); outline-offset: 1px; }
+  label.f { color: var(--muted); font-weight: 600; }
+  .seg button { background: var(--card2); border: 1px solid var(--line); font-weight: 600; }
+  .seg button.on { background: var(--txt); border-color: var(--txt); color: var(--bg); }
+  #sheet .box, #picker .box { background: var(--card); border-top: 1px solid var(--line); }
+  .pk { border-bottom-color: var(--line); } .pk:active { background: var(--card2); } .pk .ok { color: var(--verde); }
+  .pickcur { background: var(--bg); border-color: var(--line); }
+  .songs .s { border-bottom-color: var(--line); }
+  .songs .s button { background: var(--card2); border: 1px solid var(--line); display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .songs .s button.sig { background: rgba(31,191,91,.12); border-color: rgba(31,191,91,.4); color: #6FE29A; }
+  .songs .s .g { font-family: var(--num); color: var(--muted); }
+  .songs .s .nuevo { color: var(--ambar); }
+  .songs .s.on .ti { color: var(--verde); }
+  #toast { background: var(--rojo); font-family: var(--ui); } #toast.ok { background: var(--card2); border: 1px solid var(--line); color: var(--txt); }
+  @media (min-width: 760px) { header .marca { flex-basis: auto; margin-right: 26px; padding: 0 0 8px; } }
+  @media (max-width: 520px) { .tabs { gap: 0; } .tab { flex: 1; } header { padding-left: 12px; padding-right: 12px; } .page { padding: 10px; } }
 </style>
 </head>
 <body>
@@ -203,11 +290,11 @@
     <button class="tab" data-page="songs">Canciones</button>
   </div>
   <div class="clock">
-    <span>🕐 <b id="clk">--:--</b></span>
+    <span class="ck"><svg class="i" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><b id="clk">--:--</b></span>
     <span>Show <b id="elapsed">0:00</b></span>
     <span>Fin prev. <b id="eta">--:--</b></span>
-    <span id="conn" class="ko">● Conectando…</span>
-    <button id="lockBtn" title="Mantén pulsado para bloquear o desbloquear">🔓</button>
+    <span id="conn" class="ko">Conectando…</span>
+    <button id="lockBtn" title="Mantén pulsado para bloquear o desbloquear" aria-label="Bloquear"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg></button>
   </div>
 </header>
 
@@ -231,14 +318,14 @@
           <div id="nextNote"></div>
         </div>
 
-        <button class="go" id="goBtn"><span class="fill" id="goFill"></span><span id="goTxt">▶ SIGUIENTE</span><small id="goSub"></small></button>
+        <button class="go" id="goBtn"><span class="fill" id="goFill"></span><span id="goTxt"><svg class="i" aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z" fill="currentColor" stroke="none"/></svg>SIGUIENTE</span><small id="goSub"></small></button>
 
         <div class="transport">
-          <button class="btn lockable" data-c="back">⏮<small>Atrás</small></button>
-          <button class="btn lockable" data-c="skip">⏭<small>Saltar</small></button>
-          <button class="btn lockable" data-c="toggle">❚❚/▶<small>Pausa</small></button>
-          <button class="btn ambar lockable" data-c="fade">⤵<small>Fundido</small></button>
-          <button class="btn rojo" data-c="panic">■<small>PÁNICO</small></button>
+          <button class="btn lockable" data-c="back"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5v14L8 12z" fill="currentColor" stroke="none"/><path d="M5 5v14"/></svg><small>Atrás</small></button>
+          <button class="btn lockable" data-c="skip"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14l11-7z" fill="currentColor" stroke="none"/><path d="M19 5v14"/></svg><small>Saltar</small></button>
+          <button class="btn lockable" data-c="toggle"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14M16 5v14"/></svg><small>Pausa</small></button>
+          <button class="btn ambar lockable" data-c="fade"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6c6 0 9 12 18 12"/><path d="M3 18h18" opacity=".35"/></svg><small>Fundido</small></button>
+          <button class="btn rojo" data-c="panic"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none"/></svg><small>Pánico</small></button>
         </div>
 
         <div class="card vol lockable">
@@ -258,9 +345,9 @@
       <div class="card">
         <div class="row" style="justify-content:space-between;margin-bottom:6px">
           <div class="label" id="showNameLbl">Guion</div>
-          <button class="btn lockable" id="restartBtn" style="padding:8px 12px">⟲ Al inicio</button>
+          <button class="btn lockable" id="restartBtn" style="padding:8px 12px"><svg class="i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4.5h4.5"/></svg>Al inicio</button>
         </div>
-        <div class="muted" style="margin-bottom:8px">Toca un elemento para que sea el siguiente. ▶ lo dispara ya.</div>
+        <div class="muted" style="margin-bottom:8px">Toca un elemento para que sea el siguiente. El botón de la derecha lo dispara ya.</div>
         <div class="cues" id="cueList"></div>
       </div>
     </div>
@@ -273,20 +360,20 @@
         <label class="f" for="showSel" style="margin-top:0">Show guardado en el reproductor</label>
         <div class="row" style="flex-wrap:nowrap">
           <select id="showSel" style="flex:1;min-width:0"></select>
-          <button class="btn" id="showNew" title="Show nuevo vacío">＋ Nuevo</button>
-          <button class="btn" id="showDup" title="Duplicar este show">⧉</button>
-          <button class="btn" id="showDel" title="Borrar este show">🗑</button>
+          <button class="btn" id="showNew" title="Show nuevo vacío"><svg class="i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Nuevo</button>
+          <button class="btn" id="showDup" title="Duplicar este show" aria-label="Duplicar este show"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button>
+          <button class="btn" id="showDel" title="Borrar este show" aria-label="Borrar este show"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>
         </div>
       </div>
       <label class="f" for="showName">Nombre del show</label>
       <input type="text" id="showName" placeholder="Mi show">
       <div class="row" style="margin-top:12px">
         <button class="btn verde" id="addSong">+ Canción</button>
-        <button class="btn azul" id="addSilence">+ Silencio</button>
+        <button class="btn" id="addSilence">+ Silencio</button>
         <button class="btn" id="addBlock">+ Bloque</button>
         <button class="btn" id="fillAll">Crear con todas las canciones</button>
       </div>
-      <div class="muted" style="margin-top:8px">Los cambios se guardan solos en el reproductor. Toca ✎ para editar: notas del guion, si al terminar espera tu orden o sigue sin parar, fundidos, corte y bucle.</div>
+      <div class="muted" style="margin-top:8px">Los cambios se guardan solos en el reproductor. Toca el lápiz para editar: notas del guion, si al terminar espera tu orden o sigue sin parar, fundidos, corte y bucle.</div>
     </div>
     <div class="card ed" id="edList"></div>
   </section>
@@ -294,8 +381,8 @@
   <!-- ===================== CANCIONES ===================== -->
   <section class="page" id="p-songs">
     <div class="card">
-      <div class="row" style="justify-content:space-between"><div class="label">Todas las canciones (reproducción libre, fuera del guion)</div><button class="btn" id="reloadSongs" style="padding:8px 12px">⟳ Recargar</button></div>
-      <input type="search" id="songsQ" class="q" placeholder="🔍 Buscar canción, carpeta o artista…" autocomplete="off">
+      <div class="row" style="justify-content:space-between"><div class="label">Todas las canciones (reproducción libre, fuera del guion)</div><button class="btn" id="reloadSongs" style="padding:8px 12px"><svg class="i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4.5h-4.5"/></svg>Recargar</button></div>
+      <input type="search" id="songsQ" class="q" placeholder="Buscar canción, carpeta o artista…" autocomplete="off">
       <div class="songs" id="songList"></div>
     </div>
   </section>
@@ -304,7 +391,7 @@
 <div id="sheet"><div class="box" id="sheetBox"></div></div>
 <div id="picker"><div class="box">
   <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b style="font-size:18px" id="pkTitle">Añadir canciones</b><button class="btn verde" id="pkClose">Listo</button></div>
-  <input type="search" id="pkQ" class="q" placeholder="🔍 Buscar por título, carpeta o artista…" autocomplete="off">
+  <input type="search" id="pkQ" class="q" placeholder="Buscar por título, carpeta o artista…" autocomplete="off">
   <div class="muted" id="pkInfo" style="margin:6px 2px"></div>
   <div id="pkList"></div>
 </div></div>
@@ -312,6 +399,9 @@
 
 <script src="engine.js"></script>
 <script>
+const ICO = {"play": "<path d=\"M7 4.5v15l12-7.5z\" fill=\"currentColor\" stroke=\"none\"/>", "back": "<path d=\"M19 5v14L8 12z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M5 5v14\"/>", "skip": "<path d=\"M5 5v14l11-7z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M19 5v14\"/>", "pause": "<path d=\"M8 5v14M16 5v14\"/>", "fade": "<path d=\"M3 6c6 0 9 12 18 12\"/><path d=\"M3 18h18\" opacity=\".35\"/>", "stop": "<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"1.5\" fill=\"currentColor\" stroke=\"none\"/>", "lock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"9\" rx=\"2\"/><path d=\"M8 11V8a4 4 0 0 1 8 0v3\"/>", "unlock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"9\" rx=\"2\"/><path d=\"M8 11V8a4 4 0 0 1 7.5-2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"M20 20l-4.2-4.2\"/>", "grip": "<circle cx=\"9\" cy=\"6\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"6\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"9\" cy=\"12\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"12\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"9\" cy=\"18\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"15\" cy=\"18\" r=\"1.3\" fill=\"currentColor\"/>", "folder": "<path d=\"M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "note": "<path d=\"M9 18V6l10-2v12\"/><circle cx=\"6.5\" cy=\"18\" r=\"2.5\"/><circle cx=\"16.5\" cy=\"16\" r=\"2.5\"/>", "silence": "<path d=\"M5 12h3M16 12h3\"/><circle cx=\"12\" cy=\"12\" r=\"2.5\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><path d=\"M12 7.5V12l3 2\"/>", "restart": "<path d=\"M4 12a8 8 0 1 0 2.5-5.8\"/><path d=\"M4 4v4.5h4.5\"/>", "reload": "<path d=\"M20 12a8 8 0 1 1-2.5-5.8\"/><path d=\"M20 4v4.5h-4.5\"/>", "up": "<path d=\"M12 19V5M6 11l6-6 6 6\"/>", "down": "<path d=\"M12 5v14M6 13l6 6 6-6\"/>", "edit": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M14 6l4 4\"/>", "trash": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "copy": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3\"/>", "next": "<path d=\"M5 12h12M13 6l6 6-6 6\"/>", "wait": "<rect x=\"7\" y=\"5\" width=\"3.5\" height=\"14\" rx=\"1\" fill=\"currentColor\" stroke=\"none\"/><rect x=\"13.5\" y=\"5\" width=\"3.5\" height=\"14\" rx=\"1\" fill=\"currentColor\" stroke=\"none\"/>", "cont": "<path d=\"M4 6l7 6-7 6zM12 6l7 6-7 6z\" fill=\"currentColor\" stroke=\"none\"/>", "notes": "<path d=\"M5 4h14v16H5z\"/><path d=\"M9 9h6M9 13h6M9 17h3\"/>", "check": "<path d=\"M5 12.5l4.5 4.5L19 7.5\"/>", "dot": "<circle cx=\"12\" cy=\"12\" r=\"5\" fill=\"currentColor\" stroke=\"none\"/>"};
+function ico(n, s) { s = s || 20; return '<svg class="i" aria-hidden="true" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICO[n] || '') + '</svg>'; }
+
 // ====================== ajuste a la pantalla ======================
 // Si el navegador del móvil está en «versión de escritorio», la página se dibuja mucho más ancha que la pantalla.
 (function fitScreen() {
@@ -369,7 +459,7 @@ function holdButton(el, ms, onDone, onProgress) {
   const end = () => { cancelAnimationFrame(raf); if (!done) onProgress && onProgress(0); };
   el.addEventListener('pointerdown', start); el.addEventListener('pointerup', end); el.addEventListener('pointerleave', end); el.addEventListener('pointercancel', end);
 }
-function setLocked(on) { document.body.classList.toggle('locked', on); $('lockBtn').textContent = on ? '🔒 Bloqueado' : '🔓'; localStorage.setItem('locked', on ? '1' : ''); }
+function setLocked(on) { document.body.classList.toggle('locked', on); $('lockBtn').innerHTML = on ? ico('lock', 18) + '<span>Bloqueado</span>' : ico('unlock', 18); localStorage.setItem('locked', on ? '1' : ''); }
 holdButton($('lockBtn'), 700, () => { setLocked(!document.body.classList.contains('locked')); toast(document.body.classList.contains('locked') ? 'Bloqueado: solo SIGUIENTE y PÁNICO' : 'Desbloqueado', true); });
 setLocked(!!localStorage.getItem('locked'));
 
@@ -416,7 +506,7 @@ document.querySelectorAll('[data-v]').forEach((b) => b.onclick = () => cmd({ cmd
 document.querySelectorAll('[data-g]').forEach((b) => b.onclick = () => { if (!st.file) return toast('No suena ninguna canción'); cmd({ cmd: 'gain', file: st.file, delta: Number(b.dataset.g) }); });
 
 // ====================== pintar Escenario ======================
-const icon = (it) => it.type === 'song' ? '🎵' : it.type === 'silence' ? '⏸' : '📂';
+const icon = (it) => ico(it.type === 'song' ? 'note' : it.type === 'silence' ? 'silence' : 'folder', 18);
 const itemTitle = (it) => it.type === 'silence' ? (it.title || 'Silencio ' + it.seconds + ' s') : (it.title || titleOf(it.file) || 'Bloque');
 function itemLen(it) {
   if (it.type === 'silence') return it.seconds;
@@ -427,7 +517,7 @@ function itemLen(it) {
 
 function paintLive() {
   const labels = { stopped: 'En espera', paused: 'En pausa', playing: st.mode === 'libre' ? 'Sonando (libre)' : 'Sonando', fading: 'Fundido de salida', silence: 'Silencio' };
-  $('nowLabel').textContent = labels[st.status] || 'En espera';
+  $('nowLabel').textContent = labels[st.status] || 'En espera'; document.body.classList.toggle('playing', st.status === 'playing');
   const idle = !st.status || st.status === 'stopped';
   $('nowTitle').textContent = idle ? (st.nextTitle ? 'Listo para: ' + st.nextTitle : 'Fin del guion') : (st.title || '—');
   const big = $('bigTime');
@@ -435,15 +525,15 @@ function paintLive() {
   else { big.textContent = '−' + fmt(st.remaining); big.className = 'bigtime' + (st.remaining <= 10 ? ' alerta' : ''); }
   $('prog').style.width = !idle && st.duration ? Math.min(100, 100 * st.position / st.duration) + '%' : '0';
   $('posTxt').textContent = idle ? 'tiempo en espera' : fmt(st.position);
-  $('durTxt').textContent = idle ? '' : fmt(st.duration) + (st.after === 'continue' ? '  · al terminar sigue ⏩' : st.mode === 'guion' ? '  · al terminar espera ⏸' : '');
+  $('durTxt').textContent = idle ? '' : fmt(st.duration) + (st.after === 'continue' ? '  · al terminar sigue' : st.mode === 'guion' ? '  · al terminar espera' : '');
   $('nowNote').textContent = idle ? '' : (st.note || '');
   $('nextTitle').textContent = st.nextTitle || 'Fin del guion';
   $('nextNote').textContent = st.nextNote || '';
   const nb = $('nextBadge');
-  nb.textContent = st.nextTitle ? (st.nextAfter === 'continue' ? 'al terminar sigue ⏩' : 'al terminar espera ⏸') : '';
+  nb.textContent = st.nextTitle ? (st.nextAfter === 'continue' ? 'al terminar sigue' : 'al terminar espera') : '';
   nb.className = 'badge ' + (st.nextAfter === 'continue' ? 'sigue' : 'espera');
   $('goBtn').disabled = !st.nextTitle;
-  $('goTxt').textContent = st.nextTitle ? '▶ SIGUIENTE' : 'FIN DEL GUION';
+  $('goTxt').innerHTML = st.nextTitle ? ico('play', 30) + 'SIGUIENTE' : 'FIN DEL GUION';
   $('goSub').textContent = st.nextTitle ? st.nextTitle + (document.body.classList.contains('locked') ? ' · mantén pulsado' : '') : '';
   if (!volDrag && typeof st.volume === 'number') { $('volSlider').value = Math.round(volToPos(st.volume) * 1000); $('volVal').textContent = Math.round(st.volume * 100) + '%'; }
   $('gainVal').textContent = typeof st.gain === 'number' ? Math.round(st.gain * 100) + '%' : '—';
@@ -453,7 +543,7 @@ function paintLive() {
   $('elapsed').textContent = fmt(st.showElapsed);
   $('eta').textContent = st.estRemaining > 0 ? hhmm(new Date(now.getTime() + st.estRemaining * 1000)) : '--:--';
   const c = $('conn');
-  if (st.players === 0) { c.className = 'warn'; c.textContent = '● Reproductor no abierto'; } else if (st.players > 0) { c.className = 'ok'; c.textContent = '● Conectado'; }
+  if (st.players === 0) { c.className = 'warn'; c.textContent = 'Reproductor no abierto'; } else if (st.players > 0) { c.className = 'ok'; c.textContent = 'Conectado'; }
   paintCueMarks();
 }
 
@@ -469,7 +559,7 @@ function renderCues() {
     const len = itemLen(it);
     row.innerHTML = '<span class="n">' + num + '</span><span class="ic">' + icon(it) + '</span><span class="ti">' + esc(itemTitle(it)) + '</span>'
       + '<span class="tag"></span>'
-      + (it.type !== 'block' ? '<span class="ln">' + (len ? fmt(len) : '') + (it.after === 'continue' ? ' ⏩' : ' ⏸') + '</span><button class="fireBtn lockable" title="Disparar ya">▶</button>' : '');
+      + (it.type !== 'block' ? '<span class="ln">' + (len ? fmt(len) : '') + (it.after === 'continue' ? ' ' + ico('cont', 12) : '') + '</span><button class="fireBtn lockable" title="Disparar ya" aria-label="Disparar ya">' + ico('play', 16) + '</button>' : '');
     row.onclick = (e) => { if (e.target.classList.contains('fireBtn')) return; if (document.body.classList.contains('locked')) return; cmd({ cmd: 'goto', index: i }); };
     const fb = row.querySelector('.fireBtn'); if (fb) fb.onclick = () => cmd({ cmd: 'fire', index: i });
     box.appendChild(row);
@@ -507,8 +597,8 @@ function describe(it) {
   const parts = [];
   if (it.type === 'song') { const l = itemLen(it); if (l) parts.push(fmt(l)); if (it.fadeIn) parts.push('entra en ' + it.fadeIn + ' s'); if (it.fadeOut) parts.push('sale en ' + it.fadeOut + ' s'); if (it.endAt) parts.push('corta en ' + fmt(it.endAt)); if (it.loop) parts.push('bucle'); const g = show.gains[it.file]; if (typeof g === 'number' && g < 1) parts.push('vol ' + Math.round(g * 100) + '%'); }
   else parts.push(it.seconds + ' s');
-  parts.push(it.after === 'continue' ? 'sigue sin parar ⏩' : 'espera tu orden ⏸');
-  if (it.note) parts.push('📝');
+  parts.push(it.after === 'continue' ? 'sigue sin parar' : 'espera tu orden');
+  if (it.note) parts.push('con notas');
   return parts.join(' · ');
 }
 
@@ -519,7 +609,7 @@ function renderEditor() {
   show.items.forEach((it, i) => {
     const row = document.createElement('div'); row.className = 'it' + (it.type === 'block' ? ' block' : '');
     row.innerHTML = '<span>' + icon(it) + '</span><div class="ti"><b>' + esc(itemTitle(it)) + '</b><span>' + esc(describe(it)) + '</span></div>'
-      + '<button data-a="drag" class="drag" title="Mantén pulsado y arrastra">⠿</button><button data-a="up">↑</button><button data-a="down">↓</button><button data-a="edit">✎</button><button data-a="del">🗑</button>';
+      + '<button data-a="drag" class="drag" title="Mantén pulsado y arrastra" aria-label="Arrastrar">' + ico('grip', 18) + '</button><button data-a="up" aria-label="Subir">' + ico('up', 18) + '</button><button data-a="down" aria-label="Bajar">' + ico('down', 18) + '</button><button data-a="edit" aria-label="Editar">' + ico('edit', 18) + '</button><button data-a="del" aria-label="Quitar">' + ico('trash', 18) + '</button>';
     row.dataset.i = i;
     startDrag(row.querySelector('.drag'), row, i);
     row.querySelectorAll('button:not(.drag)').forEach((b) => b.onclick = () => {
@@ -601,7 +691,7 @@ function openSheet(i) {
   const seg = (name, val, opts) => '<div class="seg" data-seg="' + name + '">' + opts.map(([v, l]) => '<button data-v="' + v + '" class="' + (String(val) === String(v) ? 'on' : '') + '">' + l + '</button>').join('') + '</div>';
   let html = '<div class="row" style="justify-content:space-between"><b style="font-size:18px">' + icon(it) + ' Editar ' + (it.type === 'song' ? 'canción' : it.type === 'silence' ? 'silencio' : 'bloque') + '</b><button class="btn" id="shClose">Cerrar</button></div>';
   if (it.type === 'song') {
-    html += '<label class="f">Canción</label><input type="hidden" id="fFile" value="' + esc(it.file) + '"><div class="pickcur" id="fFileCur"></div><button class="btn" id="fFileBtn" style="width:100%">🔍 Cambiar canción…</button>';
+    html += '<label class="f">Canción</label><input type="hidden" id="fFile" value="' + esc(it.file) + '"><div class="pickcur" id="fFileCur"></div><button class="btn" id="fFileBtn" style="width:100%">' + ico('search', 16) + ' Cambiar canción…</button>';
     html += '<label class="f">Título en pantalla (opcional)</label><input type="text" id="fTitle" value="' + esc(it.title) + '" placeholder="' + esc(titleOf(it.file)) + '">';
   } else if (it.type === 'silence') {
     html += '<label class="f">Duración del silencio (segundos)</label><input type="number" id="fSeconds" min="1" step="1" value="' + it.seconds + '">';
@@ -611,7 +701,7 @@ function openSheet(i) {
   }
   html += '<label class="f">Notas del guion (se ven en Escenario)</label><textarea id="fNote" placeholder="Ej.: Entra el presentador · bajan luces">' + esc(it.note) + '</textarea>';
   if (it.type !== 'block') {
-    html += '<label class="f">Al terminar…</label>' + seg('after', it.after, [['wait', '⏸ Esperar mi orden'], ['continue', '⏩ Seguir sin parar']]);
+    html += '<label class="f">Al terminar…</label>' + seg('after', it.after, [['wait', 'Esperar mi orden'], ['continue', 'Seguir sin parar']]);
     html += '<div class="muted" style="margin-top:4px">Esperar: se queda listo lo siguiente y lo lanzas tú. Seguir: arranca lo siguiente solo (canción o silencio).</div>';
   }
   if (it.type === 'song') {
@@ -683,12 +773,12 @@ function renderPicker() {
   for (const x of list) {
     const row = document.createElement('div'); row.className = 'pk';
     const d = (st.durations || {})[x.file];
-    row.innerHTML = '<span class="ok">' + (inShow.has(x.file) ? '✓' : '') + '</span><span class="t"><b></b><span></span></span><span class="muted">' + (d ? fmt(d) : '') + '</span>';
+    row.innerHTML = '<span class="ok">' + (inShow.has(x.file) ? ico('check', 18) : '') + '</span><span class="t"><b></b><span></span></span><span class="muted">' + (d ? fmt(d) : '') + '</span>';
     row.querySelector('b').textContent = x.title; row.querySelector('.t span').textContent = songPlace(x);
     row.onclick = () => {
       if (pkMode === 'replace') { $('picker').style.display = 'none'; if (pkCb) pkCb(x.file); return; }
       show.items.push({ id: uid(), type: 'song', file: x.file, title: '', note: '', seconds: 5, after: 'wait', fadeIn: 0, fadeOut: 0, startAt: 0, endAt: 0, loop: false });
-      saveShow(); row.querySelector('.ok').textContent = '✓'; toast('«' + x.title + '» añadida al final', true);
+      saveShow(); row.querySelector('.ok').innerHTML = ico('check', 18); toast('«' + x.title + '» añadida al final', true);
     };
     box.appendChild(row);
   }
@@ -734,7 +824,7 @@ function renderSongs() {
     const d = (st.durations || {})[s.file];
     const row = document.createElement('div'); row.className = 's' + (st.file === s.file ? ' on' : '');
     const inShow = show.items.some((i) => i.type === 'song' && i.file === s.file);
-    row.innerHTML = '<button class="lockable">▶</button><span class="ti">' + esc(s.title) + ' <span class="muted">' + (d ? fmt(d) : '') + (inShow ? '' : ' · <span class="nuevo">fuera del guion</span>') + '</span></span><button class="lockable sig" title="Añadir al guion como siguiente">＋ Sig.</button><button class="lockable">−1</button><span class="g">' + g + '%</span><button class="lockable">+1</button>';
+    row.innerHTML = '<button class="lockable" aria-label="Reproducir">' + ico('play', 16) + '</button><span class="ti">' + esc(s.title) + ' <span class="muted">' + (d ? fmt(d) : '') + (inShow ? '' : ' · <span class="nuevo">fuera del guion</span>') + '</span></span><button class="lockable sig" title="Añadir al guion como siguiente">' + ico('plus', 15) + ' Sig.</button><button class="lockable">−1</button><span class="g">' + g + '%</span><button class="lockable">+1</button>';
     const [pb, add, minus, plus] = row.querySelectorAll('button');
     pb.onclick = () => cmd({ cmd: 'play', file: s.file });
     add.onclick = () => addAsNext(s);
@@ -792,12 +882,12 @@ async function connect() {
   if (info.sse === false) return poll();
   const es = new EventSource('/events?role=control');
   es.addEventListener('state', (e) => onState(JSON.parse(e.data)));
-  es.onerror = () => { $('conn').className = 'ko'; $('conn').textContent = '● Sin conexión'; };
+  es.onerror = () => { $('conn').className = 'ko'; $('conn').textContent = 'Sin conexión'; };
 }
 async function poll() {
   for (;;) {
     try { onState(await (await fetch('/api/state', { cache: 'no-store' })).json()); }
-    catch { $('conn').className = 'ko'; $('conn').textContent = '● Sin conexión'; }
+    catch { $('conn').className = 'ko'; $('conn').textContent = 'Sin conexión'; }
     await new Promise((r) => setTimeout(r, 500));
   }
 }

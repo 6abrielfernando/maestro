@@ -27,7 +27,7 @@ const MIME = {
   '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.mp3': 'audio/mpeg', '.wav': 'audio/wav', '.m4a': 'audio/mp4', '.aac': 'audio/aac',
   '.ogg': 'audio/ogg', '.flac': 'audio/flac', '.aif': 'audio/aiff', '.aiff': 'audio/aiff',
-  '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
+  '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.woff2': 'font/woff2',
 };
 
 // Estado que informa el reproductor y que ven las tabletas
@@ -194,6 +194,8 @@ async function handler(req, res) {
   }
 
   if (p === '/qrcode.js' || p === '/engine.js') return serveFile(res, path.join(PUBLIC_DIR, p.slice(1)));
+  // Fuentes incluidas (funcionan sin internet)
+  if (/^\/[a-z0-9-]+\.woff2$/.test(p)) return serveFile(res, path.join(PUBLIC_DIR, p.slice(1)));
   // Iconos (pestaña del navegador y pantalla de inicio del móvil)
   if (p === '/avi.png' || p === '/favicon.ico' || p === '/favicon.png' || p === '/icono-180.png' || p === '/icono-512.png') return serveFile(res, path.join(PUBLIC_DIR, p.slice(1)));
   if (p === '/apple-touch-icon.png' || p === '/apple-touch-icon-precomposed.png') return serveFile(res, path.join(PUBLIC_DIR, 'icono-180.png'));
