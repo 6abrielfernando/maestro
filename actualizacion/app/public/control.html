@@ -66,7 +66,7 @@
   .go small { display: block; font-size: 15px; font-weight: 700; opacity: .7; margin-top: 4px; }
   .go:disabled { background: #2a2a2a; color: #777; }
   .go .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(0,0,0,.18); }
-  .transport { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+  .transport { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 12px; }
   .transport .btn { min-height: 66px; font-size: 15px; padding: 6px; }
   .transport .btn small { display: block; font-size: 11px; opacity: .75; font-weight: 600; }
 
@@ -158,7 +158,7 @@
     .transport { grid-template-columns: repeat(3, 1fr); }
     .transport .btn { min-height: 58px; }
     .transport [data-c="fade"] { grid-column: span 1; }
-    .transport [data-c="panic"] { grid-column: span 2; font-size: 18px; }
+    .transport [data-c="panic"] { grid-column: span 1; font-size: 18px; }
     .vol { grid-template-columns: 1fr; gap: 6px; }
     .vol .val { text-align: left; display: inline-block; margin-left: 8px; min-width: 0; }
     .vol > div:nth-child(odd) { display: flex; align-items: baseline; }
@@ -240,6 +240,7 @@
   .transport .btn { flex-direction: column; gap: 6px; color: var(--txt); }
   .transport .btn small { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: 1; color: var(--muted); }
   .transport .btn.rojo { background: var(--rojo); border-color: var(--rojo); color: #fff; } .transport .btn.rojo small { color: #fff; }
+  .transport #undoBtn:disabled { opacity: .35; }
   .vol .val { font-family: var(--num); font-weight: 700; }
   input[type=range] { accent-color: var(--txt); }
   .cues .cue { background: transparent; border: 1px solid transparent; border-radius: 10px; }
@@ -331,6 +332,7 @@
           <button class="btn lockable" data-c="skip"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14l11-7z" fill="currentColor" stroke="none"/><path d="M19 5v14"/></svg><small>Saltar</small></button>
           <button class="btn lockable" data-c="toggle"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14M16 5v14"/></svg><small>Pausa</small></button>
           <button class="btn ambar lockable" data-c="fade"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6c6 0 9 12 18 12"/><path d="M3 18h18" opacity=".35"/></svg><small>Fundido</small></button>
+          <button class="btn" id="undoBtn" disabled title="Vuelve al estado anterior a la última orden"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><small>Deshacer</small></button>
           <button class="btn rojo" data-c="panic"><svg class="i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none"/></svg><small>Pánico</small></button>
         </div>
 
@@ -477,7 +479,7 @@ function holdButton(el, ms, onDone, onProgress) {
   el.addEventListener('pointerdown', start); el.addEventListener('pointerup', end); el.addEventListener('pointerleave', end); el.addEventListener('pointercancel', end);
 }
 function setLocked(on) { document.body.classList.toggle('locked', on); $('lockBtn').innerHTML = on ? ico('lock', 18) + '<span>Bloqueado</span>' : ico('unlock', 18); localStorage.setItem('locked', on ? '1' : ''); }
-holdButton($('lockBtn'), 700, () => { setLocked(!document.body.classList.contains('locked')); toast(document.body.classList.contains('locked') ? 'Bloqueado: solo SIGUIENTE y PÁNICO' : 'Desbloqueado', true); });
+holdButton($('lockBtn'), 700, () => { setLocked(!document.body.classList.contains('locked')); toast(document.body.classList.contains('locked') ? 'Bloqueado: solo SIGUIENTE, DESHACER y PÁNICO' : 'Desbloqueado', true); });
 setLocked(!!localStorage.getItem('locked'));
 
 // ====================== botón SIGUIENTE ======================
@@ -509,6 +511,7 @@ setLocked(!!localStorage.getItem('locked'));
 })();
 
 document.querySelectorAll('[data-c]').forEach((b) => b.onclick = () => cmd(b.dataset.c === 'fade' ? { cmd: 'fade', value: 3 } : { cmd: b.dataset.c }));
+$('undoBtn').onclick = () => { if (!st.undo) return; cmd({ cmd: 'undo' }); toast('Deshecho: ' + st.undo, true); };
 $('restartBtn').onclick = () => { if (confirm('¿Volver al inicio del guion? Se para lo que suena.')) cmd({ cmd: 'restart' }); };
 
 // ====================== volumen ======================
@@ -551,6 +554,7 @@ function paintLive() {
   nb.textContent = st.nextTitle ? (st.nextAfter === 'continue' ? 'al terminar sigue' : 'al terminar espera') : '';
   nb.className = 'badge ' + (st.nextAfter === 'continue' ? 'sigue' : 'espera');
   $('goBtn').disabled = !st.nextTitle;
+  $('undoBtn').disabled = !st.undo; $('undoBtn').title = st.undo ? 'Deshacer: ' + st.undo : 'Nada que deshacer';
   $('vidBar').style.display = st.hasVisual ? '' : 'none';
   $('negroBtn').classList.toggle('on', !!st.blackout); $('negroBtn').textContent = st.blackout ? 'Quitar negro' : 'Negro';
   $('goTxt').innerHTML = st.nextTitle ? ico('play', 30) + 'SIGUIENTE' : 'FIN DEL GUION';

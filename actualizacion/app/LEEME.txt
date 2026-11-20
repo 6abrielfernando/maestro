@@ -50,12 +50,15 @@ ESCENARIO (PESTAÑA DEL CONTROL)
   En espera: cuenta el tiempo entre canción y canción.
 - Siguiente: qué viene y si al terminar espera tu orden (⏸) o sigue sin parar (⏩).
 - Atrás / Saltar (mueven el «siguiente» sin sonar), Pausa, Fundido y PÁNICO (para todo con fundido).
+- ↶ Deshacer: vuelve al estado anterior a la última orden o al último paso automático.
+  Si alguien toca SIGUIENTE sin querer, lo que sonaba vuelve en el punto exacto donde se cortó.
+  Guarda las últimas 20 acciones (cada toque deshace una).
 - Lista del guion: tócala para elegir qué es lo siguiente; ▶ lo dispara al momento.
 - Volumen general: −5 −1 +1 +5 para ajustes finos (100 → 94 % con 6 toques).
   El deslizador es fino arriba: de 100 a 94 % usa una cuarta parte del recorrido.
 - Esta canción: ajuste propio de la canción que suena; se guarda para la próxima vez.
 - SIGUIENTE solo responde a un toque puntual: si deslizas el dedo para mover la pantalla, no dispara.
-- 🔓 Bloqueo (mantén pulsado): solo funcionan SIGUIENTE (manteniendo pulsado) y PÁNICO.
+- 🔓 Bloqueo (mantén pulsado): solo funcionan SIGUIENTE (manteniendo pulsado), DESHACER y PÁNICO.
 
 GUION
 - VARIOS SHOWS: arriba eliges el show. «＋ Nuevo» crea uno vacío, ⧉ lo duplica,

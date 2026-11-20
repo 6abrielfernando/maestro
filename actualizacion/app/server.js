@@ -152,7 +152,7 @@ function serveAudio(req, res, name) {
   }
 }
 
-const COMMANDS = new Set(['go', 'fire', 'goto', 'skip', 'back', 'restart', 'play', 'toggle', 'stop', 'fade', 'panic',
+const COMMANDS = new Set(['go', 'undo', 'fire', 'goto', 'skip', 'back', 'restart', 'play', 'toggle', 'stop', 'fade', 'panic',
   'volume', 'volstep', 'gain', 'seek', 'reloadSongs', 'next', 'prev', 'blackout']);
 const SHOW_FILE = process.env.SHOW_FILE || path.join(__dirname, 'guion.json');
 let showJson = fs.existsSync(SHOW_FILE) ? fs.readFileSync(SHOW_FILE, 'utf8') : 'null';

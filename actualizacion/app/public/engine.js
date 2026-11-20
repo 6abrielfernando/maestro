@@ -145,7 +145,11 @@
       const wasCue = current && current.index >= 0;
       const it = current && current.item;
       stopAudio(); clearSilence(); current = null; standbySince = Date.now();
-      if (wasCue && it && it.after === 'continue' && nextIndex >= 0) fire(nextIndex);
+      if (wasCue && it && it.after === 'continue' && nextIndex >= 0) {
+        // Paso automático: deshacerlo deja el show parado y listo para lo que arrancó solo
+        remember('Paso automático', { cur: null });
+        fire(nextIndex);
+      }
       else { fadeK = 1; syncVisual(); applyVol(); push(true); }
     }
 
@@ -156,12 +160,15 @@
       else { stopAudio(); clearSilence(); fn(); }
     }
 
-    function startSong(item, index) {
+    // opts (solo para Deshacer): at = segundo donde retomar, fadeIn, paused, then = ajustes finales
+    function startSong(item, index, opts) {
+      opts = opts || {};
       clearThen(() => {
         clearSilence();
         current = { kind: 'song', item, index };
         endHandled = false;
-        const startAt = item.startAt || 0;
+        const startAt = opts.at !== undefined ? opts.at : (item.startAt || 0);
+        const fadeIn = opts.paused ? 0 : opts.fadeIn !== undefined ? opts.fadeIn : item.fadeIn;
         if (pre && pre.el && pre.file === item.file && pre.startAt === startAt) {
           audio = pre.el; pre = null;                 // ya estaba cargada: arranque instantáneo
           if (startAt > 0 && audio.readyState > 0 && Math.abs(audio.currentTime - startAt) > 0.3) { try { audio.currentTime = startAt; } catch {} }
@@ -171,34 +178,106 @@
           if (startAt > 0) { const a = audio; a.addEventListener('loadedmetadata', () => { try { a.currentTime = startAt; } catch {} }, { once: true }); }
         }
         audio.loop = !!item.loop;
-        fadeK = item.fadeIn > 0 ? 0 : 1; applyVol();
+        fadeK = fadeIn > 0 ? 0 : 1; applyVol();
         syncVisual();
-        audio.play().catch(() => {});
-        if (item.fadeIn > 0) ramp(1, item.fadeIn, null, 'in');
+        if (!opts.paused) audio.play().catch(() => {});
+        if (fadeIn > 0) ramp(1, fadeIn, null, 'in');
         if (index >= 0) { cueIndex = index; nextIndex = nextPlayable(index + 1); nextManual = false; markStart(index); }
+        if (opts.then) opts.then();
         push(true);
       });
     }
 
-    function startImage(item, index) {
+    // Tiempo de un silencio o una imagen; al deshacer se retoma lo que quedaba (opts.left)
+    function timer(item, opts) {
+      const left = opts.left !== undefined ? Math.max(0.1, opts.left) : item.seconds;
+      return { end: Date.now() + left * 1000, total: item.seconds, pausedLeft: opts.paused ? left : 0 };
+    }
+
+    function startImage(item, index, opts) {
+      opts = opts || {};
       clearThen(() => {
         current = { kind: 'image', item, index };
-        silence = { end: Date.now() + item.seconds * 1000, total: item.seconds, pausedLeft: 0 };
-        fadeK = item.fadeIn > 0 ? 0 : 1; applyVol(); syncVisual();
-        if (item.fadeIn > 0) ramp(1, item.fadeIn, null, 'in');
+        silence = timer(item, opts);
+        const fadeIn = opts.fadeIn !== undefined ? opts.fadeIn : item.fadeIn;
+        fadeK = fadeIn > 0 ? 0 : 1; applyVol(); syncVisual();
+        if (fadeIn > 0) ramp(1, fadeIn, null, 'in');
         if (index >= 0) { cueIndex = index; nextIndex = nextPlayable(index + 1); nextManual = false; markStart(index); }
+        if (opts.then) opts.then();
         push(true);
       });
     }
 
-    function startSilence(item, index) {
+    function startSilence(item, index, opts) {
+      opts = opts || {};
       clearThen(() => {
         current = { kind: 'silence', item, index };
         fadeK = 1; syncVisual(); applyVol();
-        silence = { end: Date.now() + item.seconds * 1000, total: item.seconds, pausedLeft: 0 };
+        silence = timer(item, opts);
         if (index >= 0) { cueIndex = index; nextIndex = nextPlayable(index + 1); nextManual = false; markStart(index); }
+        if (opts.then) opts.then();
         push(true);
       });
+    }
+
+    // ---------- Deshacer ----------
+    // Antes de cada orden que cambia el show (o de un paso automático) se guarda una foto del estado.
+    // Deshacer vuelve a esa foto: retoma lo que sonaba en el punto exacto, con un fundido de entrada corto.
+    const history = [];
+    const HISTORY_MAX = 20;
+    const idAt = (k) => (k >= 0 && show.items[k] ? show.items[k].id : null);
+    function snapshot() {
+      let cur = null;
+      // Algo que ya se estaba yendo (fundido de salida) no se recupera: se da por terminado
+      if (current && !(ramping === 'out' && endHandled)) {
+        const isSong = current.kind === 'song';
+        cur = {
+          kind: current.kind, item: current.item, index: current.index,
+          pos: isSong ? (audio.currentTime || 0) : remainingNow(),
+          paused: isSong ? audio.paused : !!silence.pausedLeft,
+        };
+      }
+      return { cur, cueIndex, cueId: idAt(cueIndex), nextIndex, nextId: idAt(nextIndex), nextManual, blackout, showStartedAt };
+    }
+    function remember(label, override) {
+      history.push({ ...snapshot(), ...(override || {}), label, at: Date.now() });
+      if (history.length > HISTORY_MAX) history.shift();
+    }
+    function indexOfId(id, fallback) {
+      if (!id) return fallback >= 0 && fallback < show.items.length ? fallback : -1;
+      const k = show.items.findIndex((i) => i.id === id);
+      return k >= 0 ? k : -1;
+    }
+    function undo() {
+      const s = history.pop();
+      if (!s) return;
+      const finish = () => {
+        cueIndex = indexOfId(s.cueId, s.cueIndex);
+        nextIndex = indexOfId(s.nextId, s.nextIndex);
+        nextManual = s.nextManual;
+        blackout = s.blackout;
+        showStartedAt = s.showStartedAt;
+        syncVisual(); push(true);
+      };
+      const c = s.cur;
+      if (!c) {
+        if (current) clearThen(() => { current = null; fadeK = 1; standbySince = Date.now(); applyVol(); finish(); });
+        else finish();
+        return;
+      }
+      const item = (c.index >= 0 && show.items.find((i) => i.id === c.item.id)) || c.item;
+      const index = c.index >= 0 ? indexOfId(c.item.id, c.index) : -1;
+      // Misma canción que sigue cargada (p. ej. deshacer una pausa): se retoma sin recargar
+      if (c.kind === 'song' && current && current.kind === 'song' && current.item.id === c.item.id && current.item.file === c.item.file) {
+        stopRamp(); endHandled = false; fadeK = 1; applyVol();
+        if (Math.abs((audio.currentTime || 0) - c.pos) > 0.5) { try { audio.currentTime = c.pos; } catch {} }
+        if (c.paused) audio.pause(); else audio.play().catch(() => {});
+        finish(); return;
+      }
+      const opts = { paused: c.paused, fadeIn: c.paused ? 0 : 0.3, then: finish };
+      if (c.kind === 'song') startSong(item, index, { ...opts, at: c.pos });
+      else if (c.kind === 'image') startImage(item, index, { ...opts, left: c.pos });
+      else startSilence(item, index, { ...opts, left: c.pos });
     }
 
     function fire(index) {
@@ -311,6 +390,7 @@
         showVersion: show.rev, showName: show.name, durations,
         players: 1,
         video: !!(it && it.type === 'song' && isVideo(it.file)), blackout, hasVisual, idleImage: show.idleImage || '',
+        undo: history.length ? history[history.length - 1].label : null,
       };
     }
 
@@ -359,7 +439,14 @@
     }
 
     // ---------- órdenes ----------
+    const UNDO_LABEL = { go: 'SIGUIENTE', fire: 'Lanzar', play: 'Reproducir', toggle: 'Pausa', stop: 'Parar', fade: 'Fundido', panic: 'Pánico',
+      restart: 'Volver al inicio', skip: 'Saltar', back: 'Atrás', goto: 'Elegir siguiente', blackout: 'Negro' };
+
     function handle(cmd) {
+      if (cmd.cmd === 'undo') { undo(); return; }
+      // Solo se guarda la foto si la orden va a cambiar algo (un SIGUIENTE al final del guion no cuenta)
+      const changes = cmd.cmd === 'go' ? nextIndex >= 0 : ['toggle', 'stop', 'fade', 'panic'].includes(cmd.cmd) ? !!current : true;
+      if (UNDO_LABEL[cmd.cmd] && changes) remember(UNDO_LABEL[cmd.cmd]);
       switch (cmd.cmd) {
         case 'go': if (nextIndex >= 0) fire(nextIndex); break;
         case 'fire': fire(Number(cmd.index)); break;
