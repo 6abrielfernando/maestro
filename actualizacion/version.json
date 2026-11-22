@@ -1,31 +1,31 @@
 {
- "version": "1.6.0",
- "notas": "Nuevo aspecto con el sistema de diseño de AVI Music: más contraste y colores de estado claros",
+ "version": "1.7.0",
+ "notas": "Nuevo acabado: teclas retroiluminadas, pantalla de cristal y pilotos LED",
  "files": {
   "server.js": "08943c92e0153567079c96d9bf76beafd4d10a1af29233fec77bb91fc5e51d0a",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "cb1d9a30bc4ab8a397f39b7d786bb82aca0b816077eefc35d7c822017d75f6a5",
+  "version.txt": "bb7320d831e7a151aa901c35e7326c752fa2ef5024f30768c42319b8bed171ed",
   "LEEME.txt": "d4ac9c6d59b462a50f2c2dfcf32e0bacae3d6a0839082da3dc57b837f52c9c15",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
-  "public/control.html": "ac69b5e1899d3b4bde52c9cd8cc3b4f546a23aaad1d0b2743c7d2bd557418851",
+  "public/control.html": "5328ac5c0839954d9ba0478526f45c65e377a5935d515c73376405aef64cc090",
   "public/engine.js": "5661cb9629998508c9f323d05f6a525c84111c0b8aa76443f1400ead7cd6d7b6",
-  "public/favicon.ico": "23baa002e42e5327bf38a264dd329a20e7b867e657df2181900e90fac105266c",
-  "public/favicon.png": "6fd0963702659dfacba81ebedad3bafd453af7d428e3d4b225b6b5fb8dc5dad4",
+  "public/favicon.ico": "436611d7b44f4717430c8ba271858de3c0e3f5e1bc3b19d0dde8a4918d9730d8",
+  "public/favicon.png": "d79435b963c6add2f8bc6ccb0122b2ed8c1859246d293878ea2d252097b2af54",
   "public/fuentes-licencia.txt": "917115259b8ec6484e17e5fc404887488d42df70c03e929e2529db653b4cffb5",
-  "public/icono-180.png": "eaf8871583ddcccc20d7bef4116bea29dfdceda862f66dc998c354d18e4ca4c0",
-  "public/icono-512.png": "c590f32de3965d27ba1b7631074951e0792c8c0f20c1da487e294218b52400c4",
+  "public/icono-180.png": "ae6275baa99f2821d55cf13d6848184a575164f267ff3da9889fb9bfe7e0bd57",
+  "public/icono-512.png": "09261479bdd0e46e76bc52d2edd9179ce6f7dde65ed8fe84168daebf006b8d00",
   "public/inter-ext.woff2": "34b9c504cab7a73e37b746343a449132e56cf7b5481af2cb81dc74dcff25c956",
   "public/inter.woff2": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
   "public/jbmono-ext.woff2": "79bfdab9ba467e26eea4122e6f2567e188dd8a09a8c730d501fc487c4ab99c6e",
   "public/jbmono.woff2": "18be452724bfdc236c074ca94a249a7f41a86752c7d04ab258ce9ed5651f6a7e",
-  "public/player.html": "1a846ec339716819a8d57b34375f1da1efbe70f64b0109b17f0096e44ce6d8c1",
+  "public/player.html": "4a9dd289dc34d423bae797bf3b70574697c5a07d49aa00be6f70175bf219efd0",
   "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780",
   "public/salida.html": "f05ba17225dc6c5140a087b27bb312b1a8d0290100d4251468e37f6587b086a1",
   "public/spacegrotesk.woff2": "13caee30f1112d36222e872c1dcecd8e08a163bba59c7b87f7c33c80fa60347d"
  },
  "apk": {
-  "version": "1.6.0",
+  "version": "1.7.0",
   "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
  }
 }

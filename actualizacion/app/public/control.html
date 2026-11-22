@@ -285,13 +285,11 @@
 
   /* ================= SISTEMA AVI · registro Escenario (Maestro 1.6) =================
      Colores y tipografías del sistema de diseño de AVI Music. El rojo de marca (--avi) solo identifica;
-     el estado usa verde (suena), ámbar (atención), rojo claro (parar) y azul (siguiente). Esquinas rectas. */
+     el estado usa verde (suena), ámbar (atención), rojo claro (parar) y azul (siguiente). */
   @font-face { font-family: 'Space Grotesk'; src: url(spacegrotesk.woff2) format('woff2'); font-weight: 300 700; font-display: swap; }
   :root { --verde: #3ECF7A; --rojo: #FF6259; --ambar: #F0A53A; --azul: #6DB3FF; --avi: #BB141A;
     --bg: #0A0908; --card: #14110E; --card2: #1B1814; --line: rgba(239,231,212,.16); --txt: #EFE7D4; --muted: #8A8478; --faint: #6B665C; --sobre: #0A0908;
     --ui: 'Space Grotesk', -apple-system, 'Segoe UI', Roboto, sans-serif; --num: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
-  *, *::before, *::after { border-radius: 0 !important; }
-  #conn::before, #nowLabel::before, #plHead::before, .dot { border-radius: 50% !important; }
   .btn.verde, .btn.rojo, .btn.azul, .transport .btn.rojo, .b-verde, .b-azul { color: var(--sobre); }
   .transport .btn.rojo small { color: var(--sobre); }
   .go { color: var(--sobre); } .go small { color: var(--sobre); opacity: .75; }
@@ -310,6 +308,78 @@
   .songs .s button.sig { background: rgba(62,207,122,.12); border-color: rgba(62,207,122,.4); color: var(--verde); }
   #negroBtn.on { background: var(--txt); border-color: var(--txt); color: var(--bg); }
   body.locked #lockBtn { color: var(--sobre); }
+  /* ===== MATERIALES (Maestro 1.7): teclas retroiluminadas, pantalla de cristal, chapa y pilotos LED.
+       Solo cambia el acabado; colores, tipografías y la regla del rojo son los del sistema AVI. ===== */
+  :root { --r-tecla: 10px; --r-panel: 14px; }
+  html { background: #0A0908; }
+  body { background: radial-gradient(130% 70% at 50% -10%, #1F1B17 0%, #0A0908 62%) fixed; }
+  /* grano fino de metal anodizado */
+  body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .07; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  main, section, .page { position: relative; z-index: 1; }
+
+  /* paneles: chapa con bisel */
+  .card { border-radius: var(--r-panel); background: linear-gradient(180deg, #1E1A16 0%, #131110 100%); border: 1px solid rgba(0,0,0,.7);
+    box-shadow: inset 0 1px 0 rgba(239,231,212,.10), inset 0 0 0 1px rgba(239,231,212,.03), 0 12px 24px -14px rgba(0,0,0,.95); }
+
+  /* pantalla de cristal para el tiempo */
+  .bigtime { display: block; position: relative; overflow: hidden; margin: 10px 0 6px; padding: 10px 14px 8px; border-radius: 10px;
+    background: linear-gradient(180deg, #030303 0%, #0E0C0B 100%);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(239,231,212,.09);
+    text-shadow: 0 0 22px rgba(239,231,212,.28); }
+  .bigtime::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(112deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.035) 30%, rgba(255,255,255,0) 31%); }
+  .bigtime.alerta { text-shadow: 0 0 22px rgba(255,98,89,.55); } .bigtime.espera { text-shadow: 0 0 22px rgba(240,165,58,.5); }
+
+  /* teclas de goma */
+  .btn, #lockBtn { border-radius: var(--r-tecla); background: linear-gradient(180deg, #2C2823 0%, #1A1714 100%); border: 1px solid #060505;
+    box-shadow: inset 0 1px 0 rgba(239,231,212,.15), inset 0 -2px 0 rgba(0,0,0,.45), 0 2px 0 #050404, 0 8px 12px -6px rgba(0,0,0,.85);
+    transition: transform .06s, box-shadow .06s; }
+  .btn:active, #lockBtn:active { transform: translateY(2px); box-shadow: inset 0 2px 6px rgba(0,0,0,.75), 0 0 0 #000; }
+  .btn:disabled { box-shadow: inset 0 1px 0 rgba(239,231,212,.06), 0 1px 0 #050404; }
+
+  /* SIGUIENTE: tecla retroiluminada */
+  .go { border-radius: 16px; border: 1px solid #0D3D22;
+    background: radial-gradient(120% 150% at 50% -10%, #8AF5B4 0%, #3ECF7A 46%, #1F9C54 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -5px 0 rgba(0,0,0,.2), 0 3px 0 #0B3A20, 0 0 36px -4px rgba(62,207,122,.55), 0 16px 26px -12px rgba(0,0,0,.95);
+    text-shadow: 0 1px 0 rgba(255,255,255,.35); transition: transform .06s, box-shadow .06s; }
+  .go::before { content: ''; position: absolute; left: 6px; right: 6px; top: 5px; height: 42%; border-radius: 11px 11px 40% 40% / 11px 11px 22px 22px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,0)); }
+  .go:active { transform: translateY(3px); box-shadow: inset 0 3px 8px rgba(0,0,0,.35), 0 0 22px -6px rgba(62,207,122,.5); }
+  .go:disabled { background: linear-gradient(180deg, #24332B, #18221C); border-color: #050505; box-shadow: inset 0 1px 0 rgba(239,231,212,.08), 0 2px 0 #050404; text-shadow: none; }
+  .go:disabled::before { display: none; }
+
+  /* PÁNICO: tecla roja encendida */
+  .transport .btn.rojo { border-color: #4A100C; background: radial-gradient(120% 150% at 50% -10%, #FF9D96 0%, #FF6259 46%, #D2362C 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -3px 0 rgba(0,0,0,.25), 0 2px 0 #4A100C, 0 0 24px -6px rgba(255,98,89,.65), 0 8px 12px -6px rgba(0,0,0,.85); }
+
+  /* LED */
+  #nowLabel::before, #plHead::before, #conn::before { border-radius: 50%; width: 9px; height: 9px; background: radial-gradient(circle at 35% 30%, #5A554C, #2A2723); box-shadow: inset 0 -1px 1px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.6); }
+  body.playing #nowLabel::before, body.sonando #plHead::before, #conn.ok::before { background: radial-gradient(circle at 35% 28%, #D6FFE4 0%, #3ECF7A 50%, #178045 100%); box-shadow: 0 0 10px 2px rgba(62,207,122,.75), 0 0 0 1px rgba(0,0,0,.5); }
+  #conn.ko::before { background: radial-gradient(circle at 35% 28%, #FFD9D6 0%, #FF6259 50%, #B3241B 100%); box-shadow: 0 0 10px 2px rgba(255,98,89,.7); }
+
+  /* progreso: ranura con luz */
+  .prog, .bar { height: 8px; border-radius: 6px; background: #040404; box-shadow: inset 0 1px 3px #000, 0 1px 0 rgba(239,231,212,.08); }
+  .prog > div, .bar > div { border-radius: 6px; background: linear-gradient(180deg, #9AF7BE, #3ECF7A); box-shadow: 0 0 12px rgba(62,207,122,.65); }
+
+  /* cabecera y píldoras: cristal */
+  header { background: rgba(20,17,14,.55); -webkit-backdrop-filter: blur(20px) saturate(1.5); backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid rgba(239,231,212,.10); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 24px -18px #000; }
+  #conn, .badge, .tag { border-radius: 999px; background: linear-gradient(180deg, rgba(239,231,212,.10), rgba(239,231,212,.03)); border: 1px solid rgba(239,231,212,.16);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 2px 6px -2px rgba(0,0,0,.7); }
+  .tab.on { text-shadow: 0 0 14px rgba(239,231,212,.35); }
+
+  /* volumen: ranura y mando metálico */
+  input[type=range] { -webkit-appearance: none; appearance: none; height: 30px; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 6px; background: linear-gradient(180deg, #030303, #171411); box-shadow: inset 0 1px 3px #000, 0 1px 0 rgba(239,231,212,.09); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -9px; border-radius: 50%; border: 1px solid #050505;
+    background: radial-gradient(circle at 35% 28%, #FFFBEF 0%, #D8CFB9 38%, #8E8676 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 3px 6px rgba(0,0,0,.8); }
+  .cue, .songs .s, input, select, textarea { border-radius: 10px; }
+
+  body.locked #lockBtn { background: radial-gradient(120% 150% at 50% -10%, #FFD08A 0%, #F0A53A 50%, #C47C16 100%); border-color: #4A2C05; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 2px 0 #4A2C05, 0 0 20px -6px rgba(240,165,58,.7); }
+  .btn.verde, .b-verde { border-color: #0D3D22; background: radial-gradient(120% 150% at 50% -10%, #8AF5B4 0%, #3ECF7A 46%, #1F9C54 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -3px 0 rgba(0,0,0,.2), 0 2px 0 #0B3A20, 0 8px 12px -6px rgba(0,0,0,.85); }
+  #negroBtn.on { background: linear-gradient(180deg, #FFFBEF, #D8CFB9); }
+
 </style>
 </head>
 <body>
