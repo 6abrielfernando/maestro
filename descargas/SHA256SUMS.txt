@@ -2,4 +2,4 @@
 122ee8a6eebce9f2d4b9133201f747436d2a3d8a6a014fe32c3b602ac311d629  Maestro-Windows-carpeta.zip
 d7241c939933895488efa2c825d5b9053fc44dc2b2e76f7c630ac4e0edcabbd3  Maestro-Android.apk
 a70766490a000fd4170fc894bfd49360ff4589c14fbb53bc77698b99695bbb74  Maestro-Guia-de-instalacion.pdf
-aac85add27b5fecf0128cd03d1de1e971ab1d5721d9427ff49b9935d3e41666a  Maestro-Windows.zip (unido desde partes/)
+1c755dc63b4d932f8e549bf09311e0c003cff68f4d104d1d17216232883f4da5  Maestro-Windows.zip (unido desde partes/)
