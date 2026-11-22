@@ -1,14 +1,14 @@
 {
- "version": "1.5.1",
- "notas": "iPhone/iPad: nueva app avimusica.com/control que abre sin reproductor y lo encuentra sola",
+ "version": "1.6.0",
+ "notas": "Nuevo aspecto con el sistema de diseño de AVI Music: más contraste y colores de estado claros",
  "files": {
   "server.js": "08943c92e0153567079c96d9bf76beafd4d10a1af29233fec77bb91fc5e51d0a",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "dfe7d71b3f428eb73ed853f8fded65e2986896e21d69f45ebf06bb623b450e14",
+  "version.txt": "cb1d9a30bc4ab8a397f39b7d786bb82aca0b816077eefc35d7c822017d75f6a5",
   "LEEME.txt": "d4ac9c6d59b462a50f2c2dfcf32e0bacae3d6a0839082da3dc57b837f52c9c15",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
-  "public/control.html": "a52fbdee05fc97f8305ef1824e3eff96727da8336973795ebd8667ea8a5eae0e",
+  "public/control.html": "ac69b5e1899d3b4bde52c9cd8cc3b4f546a23aaad1d0b2743c7d2bd557418851",
   "public/engine.js": "5661cb9629998508c9f323d05f6a525c84111c0b8aa76443f1400ead7cd6d7b6",
   "public/favicon.ico": "23baa002e42e5327bf38a264dd329a20e7b867e657df2181900e90fac105266c",
   "public/favicon.png": "6fd0963702659dfacba81ebedad3bafd453af7d428e3d4b225b6b5fb8dc5dad4",
@@ -19,12 +19,13 @@
   "public/inter.woff2": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
   "public/jbmono-ext.woff2": "79bfdab9ba467e26eea4122e6f2567e188dd8a09a8c730d501fc487c4ab99c6e",
   "public/jbmono.woff2": "18be452724bfdc236c074ca94a249a7f41a86752c7d04ab258ce9ed5651f6a7e",
-  "public/player.html": "ba2bb36b4f42e2f822aeae98b35a5dc4022c3ccc4c385002fcfb17f41b136f6a",
+  "public/player.html": "1a846ec339716819a8d57b34375f1da1efbe70f64b0109b17f0096e44ce6d8c1",
   "public/qrcode.js": "18ae399f81182bc9de916e9c77b195df20cc58d6f2d55a62b085a299f1bf1780",
-  "public/salida.html": "f05ba17225dc6c5140a087b27bb312b1a8d0290100d4251468e37f6587b086a1"
+  "public/salida.html": "f05ba17225dc6c5140a087b27bb312b1a8d0290100d4251468e37f6587b086a1",
+  "public/spacegrotesk.woff2": "13caee30f1112d36222e872c1dcecd8e08a163bba59c7b87f7c33c80fa60347d"
  },
  "apk": {
-  "version": "1.5.1",
+  "version": "1.6.0",
   "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
  }
 }

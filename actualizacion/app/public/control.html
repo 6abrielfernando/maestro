@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="/icono-180.png">
-<meta name="theme-color" content="#E0252D">
+<meta name="theme-color" content="#0A0908">
 <meta name="apple-mobile-web-app-title" content="Maestro">
 <title>Maestro · Control</title>
 <style>
@@ -282,6 +282,34 @@
   .songs .s .kd { color: var(--muted); display: inline-flex; vertical-align: -3px; margin-right: 4px; }
   @media (min-width: 760px) { header .marca { flex-basis: auto; margin-right: 26px; padding: 0 0 8px; } }
   @media (max-width: 520px) { .tabs { gap: 0; } .tab { flex: 1; } header { padding-left: 12px; padding-right: 12px; } .page { padding: 10px; } }
+
+  /* ================= SISTEMA AVI · registro Escenario (Maestro 1.6) =================
+     Colores y tipografías del sistema de diseño de AVI Music. El rojo de marca (--avi) solo identifica;
+     el estado usa verde (suena), ámbar (atención), rojo claro (parar) y azul (siguiente). Esquinas rectas. */
+  @font-face { font-family: 'Space Grotesk'; src: url(spacegrotesk.woff2) format('woff2'); font-weight: 300 700; font-display: swap; }
+  :root { --verde: #3ECF7A; --rojo: #FF6259; --ambar: #F0A53A; --azul: #6DB3FF; --avi: #BB141A;
+    --bg: #0A0908; --card: #14110E; --card2: #1B1814; --line: rgba(239,231,212,.16); --txt: #EFE7D4; --muted: #8A8478; --faint: #6B665C; --sobre: #0A0908;
+    --ui: 'Space Grotesk', -apple-system, 'Segoe UI', Roboto, sans-serif; --num: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
+  *, *::before, *::after { border-radius: 0 !important; }
+  #conn::before, #nowLabel::before, #plHead::before, .dot { border-radius: 50% !important; }
+  .btn.verde, .btn.rojo, .btn.azul, .transport .btn.rojo, .b-verde, .b-azul { color: var(--sobre); }
+  .transport .btn.rojo small { color: var(--sobre); }
+  .go { color: var(--sobre); } .go small { color: var(--sobre); opacity: .75; }
+  #toast { background: var(--rojo); color: var(--sobre); } #toast.ok { color: var(--txt); }
+  #conn.ok::before { box-shadow: 0 0 0 3px rgba(62,207,122,.18); }
+  input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--txt); outline-offset: 2px; }
+  .tab.on { border-bottom-color: var(--txt); }
+  body.playing #nowLabel::before { background: var(--verde); box-shadow: 0 0 0 3px rgba(62,207,122,.2); }
+  .prog > div { background: var(--verde); }
+  .cue.now { border-color: var(--verde); }
+  .cue.next { border-color: var(--azul); }
+  .cue.next .tag { color: var(--azul); }
+  .cue .n { color: var(--muted); }
+  .ed .it.ghost, .ed .it.ph { border-color: var(--txt); }
+  .seg button.on { color: var(--bg); }
+  .songs .s button.sig { background: rgba(62,207,122,.12); border-color: rgba(62,207,122,.4); color: var(--verde); }
+  #negroBtn.on { background: var(--txt); border-color: var(--txt); color: var(--bg); }
+  body.locked #lockBtn { color: var(--sobre); }
 </style>
 </head>
 <body>
