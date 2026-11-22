@@ -483,6 +483,24 @@ server.on('error', (e) => {
 process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
 
+// ---------- Aviso al lanzador del iPhone (avimusica.com/control) ----------
+// Si hay internet, cada minuto se avisa de las direcciones de este reproductor DENTRO de la red local,
+// para que el iPhone que está en la misma wifi lo encuentre solo. Sin internet no pasa nada.
+// Se envía por IPv4 y por IPv6, porque el iPhone puede salir a internet por cualquiera de las dos.
+// Para desactivarlo: ANUNCIO=0
+const ANUNCIO_ID = require('crypto').randomBytes(6).toString('hex');
+function anunciar() {
+  const ips = lanIPs(); if (!ips.length) return;
+  const body = JSON.stringify({ id: ANUNCIO_ID, nombre: HOSTNAME === 'maestro' ? require('os').hostname().replace(/\.local$/i, '') || 'Maestro' : HOSTNAME,
+    tipo: 'ordenador', version: VERSION, ips, port: PORT });
+  for (const family of [4, 6]) {
+    const req = require('https').request({ host: 'www.avimusica.com', path: '/api/maestro/anuncio', method: 'POST', family, timeout: 8000,
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) } }, (r) => r.resume());
+    req.on('error', () => {}); req.on('timeout', () => req.destroy());
+    req.end(body);
+  }
+}
+
 server.listen(PORT, '0.0.0.0', () => {
   const songs = buildLibrary(); lastSig = JSON.stringify(songs.map((x) => x.file));
   watchSongs(); setTimeout(pollLibrary, 5000);
@@ -501,4 +519,5 @@ server.listen(PORT, '0.0.0.0', () => {
   // Buscar actualizaciones al arrancar y cada 6 horas (si no hay internet, no pasa nada)
   const look = () => upd.check().then((i) => { sse(clients.player, 'update', i); if (i.available) console.log(`  Hay una versión nueva de Maestro: ${i.latest}. Actualiza desde el reproductor.`); }).catch(() => {});
   if (!process.env.NO_UPDATE_CHECK) { setTimeout(look, 4000); setInterval(look, 6 * 3600e3).unref(); }
+  if (process.env.ANUNCIO !== '0') { setTimeout(anunciar, 2000); setInterval(anunciar, 60e3).unref(); }
 });

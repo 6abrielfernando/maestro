@@ -37,8 +37,9 @@ EL DÍA DEL EVENTO
    - O escribe en el navegador:  maestro.local:8080
      (funciona en iPad/iPhone y en la mayoría de equipos; si no, usa la de números
       tipo 192.168.1.50:8080 que también aparece en pantalla).
-   Truco: en el iPad, Compartir → «Añadir a pantalla de inicio» para tenerlo a
-   pantalla completa como una app.
+   iPhone/iPad: abre avimusica.com/control en Safari y Compartir → «Añadir a pantalla
+   de inicio». Esa app abre siempre (aunque no haya reproductor), explica cómo
+   conectarse y, si hay internet, encuentra sola el reproductor de tu misma wifi.
    Si usas dos ordenadores con este programa en la misma red, cambia el nombre de uno:
    NOMBRE=maestro2 (ver AJUSTES).
 

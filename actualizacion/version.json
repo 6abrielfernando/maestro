@@ -1,14 +1,14 @@
 {
- "version": "1.5.0",
- "notas": "Nuevo botón Deshacer junto a Pánico: vuelve al estado anterior a la última orden",
+ "version": "1.5.1",
+ "notas": "iPhone/iPad: nueva app avimusica.com/control que abre sin reproductor y lo encuentra sola",
  "files": {
-  "server.js": "455b134bf2f3655d1c132b650e42ea9793a52acf4ad5c753dab13e59a355ea2d",
+  "server.js": "08943c92e0153567079c96d9bf76beafd4d10a1af29233fec77bb91fc5e51d0a",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "acb57a7135b2d7d6e665f67f056e21353023b93835f54def1ae523bf76f1bfb3",
-  "LEEME.txt": "4e9a179797480118b9f6e2cac78b4bf400da84fc80af4230617a6b47b0ba282f",
+  "version.txt": "dfe7d71b3f428eb73ed853f8fded65e2986896e21d69f45ebf06bb623b450e14",
+  "LEEME.txt": "d4ac9c6d59b462a50f2c2dfcf32e0bacae3d6a0839082da3dc57b837f52c9c15",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
-  "public/control.html": "492eb7a93d283c369c21e8762731d62918ccb05090ab8835189b493a2a845603",
+  "public/control.html": "a52fbdee05fc97f8305ef1824e3eff96727da8336973795ebd8667ea8a5eae0e",
   "public/engine.js": "5661cb9629998508c9f323d05f6a525c84111c0b8aa76443f1400ead7cd6d7b6",
   "public/favicon.ico": "23baa002e42e5327bf38a264dd329a20e7b867e657df2181900e90fac105266c",
   "public/favicon.png": "6fd0963702659dfacba81ebedad3bafd453af7d428e3d4b225b6b5fb8dc5dad4",
@@ -24,7 +24,7 @@
   "public/salida.html": "f05ba17225dc6c5140a087b27bb312b1a8d0290100d4251468e37f6587b086a1"
  },
  "apk": {
-  "version": "1.5.0",
+  "version": "1.5.1",
   "url": "https://github.com/6abrielfernando/maestro/raw/main/descargas/Maestro-Android.apk"
  }
 }
