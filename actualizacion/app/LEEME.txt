@@ -22,6 +22,12 @@ LA PANTALLA DEL REPRODUCTOR (en el ordenador)
   En pleno show: copia la canción a la carpeta y, en el control, pestaña «Canciones»,
   pulsa «＋ Sig.». Entra en el guion justo detrás de la que suena, sin cortar nada.
 
+GUION DESDE BSM
+- En BSM (bsm.avimusica.com), en la ficha de un show, «Guion para Maestro» descarga
+  el guion. En el control, pestaña «Guion», botón de importar (flecha hacia abajo):
+  elige ese archivo. Cada canción se busca en tus carpetas por archivo o por título;
+  las que no encuentra quedan como aviso «Falta el archivo» dentro del guion.
+
 VARIOS CONTROLES A LA VEZ
 - Puedes abrir el control en varios aparatos (tu tableta y el móvil del técnico, por ej.).
   Todos ven lo mismo en tiempo real y cualquiera puede disparar.

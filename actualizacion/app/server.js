@@ -273,6 +273,15 @@ async function handler(req, res) {
       if (b.activate !== false) activateShow(id); else { showsVersion++; broadcastState(); }
       return json(res, 200, { ok: true, id });
     }
+    // Guion traído de fuera (por ejemplo, descargado de BSM): ya viene con los archivos resueltos por el control
+    if (b.action === 'import') {
+      const items = Array.isArray(b.items) ? b.items.filter((i) => i && typeof i === 'object').slice(0, 2000) : null;
+      if (!items || !items.length) return json(res, 400, { ok: false, error: 'El guion está vacío' });
+      const id = newShowId();
+      writeShow(id, { name: name || 'Show importado', items, rev: String(Date.now()), origen: String(b.origen || '').slice(0, 20) });
+      activateShow(id);
+      return json(res, 200, { ok: true, id });
+    }
     if (b.action === 'activate') { const ok = activateShow(b.id); return json(res, ok ? 200 : 404, { ok }); }
     if (b.action === 'rename') {
       const sh = readShow(b.id); if (!sh || !name) return json(res, 400, { ok: false, error: 'Nombre no válido' });
