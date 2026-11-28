@@ -1013,7 +1013,7 @@ function pintarCuenta(c) {
   if (!c) return; cuenta = c;
   $('cuentaCard').style.display = '';
   const b = $('cuentaBotones'); b.innerHTML = '';
-  const boton = (txt, fn, cls) => { const x = document.createElement('button'); x.className = 'btn' + (cls ? ' ' + cls : ''); x.innerHTML = txt; x.onclick = fn; b.appendChild(x); };
+  const boton = (txt, fn, cls) => { const x = document.createElement('button'); x.className = 'btn' + (cls ? ' ' + cls : ''); x.style.whiteSpace = 'nowrap'; x.innerHTML = txt; x.onclick = fn; b.appendChild(x); };
   $('cuentaCodigo').style.display = c.vinculando ? '' : 'none';
   if (c.vinculada) {
     const partes = ['Conectado como ' + c.email];

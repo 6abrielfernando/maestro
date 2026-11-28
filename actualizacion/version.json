@@ -1,14 +1,14 @@
 {
- "version": "1.9.0",
+ "version": "1.9.1",
  "notas": "Cuenta AVI (opcional): vincula Maestro con BSM y tus shows se mantienen al día en tiempo real, en los dos sentidos.",
  "files": {
   "server.js": "ce7defa69e7220e84554fa7dc079df0a34d65fb78504834f782ada979e10e105",
   "mdns.js": "311ee825d6fbeccc75f2e4914c792a1ffbdbe7d7805bcf13f5155c4562d45775",
   "actualizar.js": "acb37896670f042357baad5147b4cfed1c62795fb2224894aa25b6dbf69a08ac",
-  "version.txt": "30f4611383aa30a15753789f40effde81332f2f8714e6d3b2940bf0fc4592377",
+  "version.txt": "0ab4fa190ca1b1d1f630ac87cf34672bfbaf1395d0148c7568d38e58335b8d68",
   "LEEME.txt": "be354bae00a7e0c04e5315697ec38dd736e305f28ce2065cced86edb8be69676",
   "public/avi.png": "391a450872c3bc92ce8ae3b3202bafe385771818f464b8a53782760ef7813a44",
-  "public/control.html": "4655e57b5977ca93d0a51444fd3f02335ac4556d5909a779c7317c81ee376f90",
+  "public/control.html": "bc11750f9590725510ebc93851001c2c2c2b35335fabb878dc21567423700105",
   "public/cuenta.js": "7e5ee718745c2dcf322ea633bc775e9985c48fee40fc616a13165639c7adf4df",
   "public/engine.js": "5661cb9629998508c9f323d05f6a525c84111c0b8aa76443f1400ead7cd6d7b6",
   "public/favicon.ico": "436611d7b44f4717430c8ba271858de3c0e3f5e1bc3b19d0dde8a4918d9730d8",
