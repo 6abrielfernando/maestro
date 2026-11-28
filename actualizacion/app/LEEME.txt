@@ -28,6 +28,14 @@ GUION DESDE BSM
   elige ese archivo. Cada canción se busca en tus carpetas por archivo o por título;
   las que no encuentra quedan como aviso «Falta el archivo» dentro del guion.
 
+CUENTA AVI (BSM) — OPCIONAL
+- En la pestaña «Guion», «Cuenta AVI»: vincula Maestro con tu cuenta de BSM con un
+  código (lo apruebas en bsm.avimusica.com/maestro) o con tu email y contraseña.
+- Tus shows de BSM aparecen aquí (marcados con ☁) y se mantienen al día en tiempo
+  real, en los dos sentidos. Si llega un cambio mientras suena música, se aplica al
+  parar. Sin internet, Maestro sigue con lo último y envía tus cambios al volver.
+- Sin cuenta, Maestro funciona igual que siempre.
+
 VARIOS CONTROLES A LA VEZ
 - Puedes abrir el control en varios aparatos (tu tableta y el móvil del técnico, por ej.).
   Todos ven lo mismo en tiempo real y cualquiera puede disparar.

@@ -14,6 +14,8 @@ const { exec, execFile } = require('child_process');
 
 const mdns = require('./mdns');
 const upd = require('./actualizar');
+// En public/ porque el actualizador de las versiones anteriores solo acepta archivos ahí (no se sirve por HTTP)
+const cuenta = require('./public/cuenta');
 const VERSION = upd.currentVersion();
 
 const PORT = Number(process.env.PORT) || 8080;
@@ -237,6 +239,7 @@ async function handler(req, res) {
     const body = await readBody(req);
     state = { ...state, ...body };
     broadcastState();
+    if (state.status === 'stopped') cuenta.alParar();
     return json(res, 200, { ok: true });
   }
 
@@ -258,6 +261,29 @@ async function handler(req, res) {
       setTimeout(() => process.exit(75), 800); // el script de inicio lo vuelve a abrir
     } catch (e) { return json(res, 200, { ok: false, error: e.message || String(e) }); }
     return;
+  }
+
+  // ----- Cuenta AVI (BSM): opcional -----
+  if (p === '/api/cuenta' && req.method === 'GET') return json(res, 200, cuenta.publico());
+  if (p === '/api/cuenta' && req.method === 'POST') {
+    const b = await readBody(req);
+    try {
+      if (b.accion === 'codigo') return json(res, 200, { ok: true, ...(await cuenta.conCodigo()) });
+      if (b.accion === 'password') { await cuenta.conPassword(String(b.email || '').trim(), String(b.password || '')); return json(res, 200, { ok: true }); }
+      if (b.accion === 'cancelar') { cuenta.cancelarCodigo(); return json(res, 200, { ok: true }); }
+      if (b.accion === 'desvincular') { cuenta.desvincular(); return json(res, 200, { ok: true }); }
+      if (b.accion === 'sincronizar') { await cuenta.sincronizarTodo(); return json(res, 200, { ok: true, ...cuenta.publico() }); }
+      if (b.accion === 'subir') {
+        const sh = readShow(b.id); if (!sh) return json(res, 404, { ok: false, error: 'No existe' });
+        if (!sh.bsm_show_id) { sh.origen = 'local-subir'; fs.writeFileSync(showPath(b.id), JSON.stringify(sh)); }
+        await cuenta.subirShow(b.id); showsVersion++; broadcastState();
+        return json(res, 200, { ok: true });
+      }
+    } catch (e) {
+      const m = String(e && e.message || e);
+      return json(res, 200, { ok: false, error: /invalid login|credentials/i.test(m) ? 'Email o contraseña incorrectos' : /fetch failed|ENOTFOUND|network/i.test(m) ? 'Sin conexión a internet' : m.slice(0, 160) });
+    }
+    return json(res, 400, { ok: false, error: 'Acción desconocida' });
   }
 
   // ----- Shows guardados -----
@@ -442,13 +468,16 @@ let showsVersion = 1;
 const newShowId = () => 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 const showPath = (id) => path.join(SHOWS_DIR, String(id).replace(/[^a-z0-9]/gi, '') + '.json');
 function readShow(id) { try { return JSON.parse(fs.readFileSync(showPath(id), 'utf8')); } catch { return null; } }
-function writeShow(id, obj) { fs.mkdirSync(SHOWS_DIR, { recursive: true }); fs.writeFileSync(showPath(id), JSON.stringify(obj)); }
+function writeShow(id, obj) {
+  fs.mkdirSync(SHOWS_DIR, { recursive: true }); fs.writeFileSync(showPath(id), JSON.stringify(obj));
+  try { cuenta.alGuardarLocal(id, obj); } catch (e) { logError('cuenta', e); }
+}
 function listShows() {
   let files = []; try { files = fs.readdirSync(SHOWS_DIR).filter((f) => f.endsWith('.json')); } catch {}
   return files.map((f) => {
     const id = f.slice(0, -5), sh = readShow(id) || {};
     let mt = 0; try { mt = fs.statSync(showPath(id)).mtimeMs; } catch {}
-    return { id, name: sh.name || 'Sin nombre', items: Array.isArray(sh.items) ? sh.items.length : 0, songs: Array.isArray(sh.items) ? sh.items.filter((i) => i.type === 'song').length : 0, updated: mt };
+    return { id, bsm: sh.bsm_show_id || null, name: sh.name || 'Sin nombre', items: Array.isArray(sh.items) ? sh.items.length : 0, songs: Array.isArray(sh.items) ? sh.items.filter((i) => i.type === 'song').length : 0, updated: mt };
   }).sort((a, b) => a.name.localeCompare(b.name, 'es', { numeric: true, sensitivity: 'base' }));
 }
 // Arranque: si aún no hay shows, el guion de siempre (guion.json) pasa a ser el primero
@@ -480,6 +509,12 @@ function openBrowser(url) {
 }
 
 initShows();
+cuenta.init({
+  dataDir: DATA_DIR, log: logError, listSongs, readShow, writeShow, listShows, newShowId, activateShow,
+  activeShow: () => config.activeShow, getState: () => state,
+  showsChanged: () => { showsVersion++; broadcastState(); },
+  onChange: (info) => { sse(clients.control, 'cuenta', info); sse(clients.player, 'cuenta', info); },
+});
 
 server.on('error', (e) => {
   if (e.code === 'EADDRINUSE') {

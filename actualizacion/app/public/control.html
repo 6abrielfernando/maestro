@@ -469,6 +469,27 @@
 
   <!-- ===================== GUION ===================== -->
   <section class="page" id="p-edit">
+    <div class="card" id="cuentaCard" style="display:none">
+      <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap">
+        <div style="min-width:0">
+          <div style="font-weight:700">Cuenta AVI · BSM <span class="muted" style="font-weight:400">(opcional)</span></div>
+          <div class="muted" id="cuentaEstado" style="margin-top:2px">Sin vincular</div>
+        </div>
+        <div class="row" id="cuentaBotones" style="flex-wrap:nowrap"></div>
+      </div>
+      <div id="cuentaCodigo" style="display:none;margin-top:12px;text-align:center">
+        <div class="muted">En el móvil o el ordenador, entra en <b id="cuentaWeb">bsm.avimusica.com/maestro</b> y escribe:</div>
+        <div id="cuentaCod" style="font:800 44px/1.2 var(--mono, monospace);letter-spacing:.18em;margin:10px 0;color:var(--txt)"></div>
+        <div id="cuentaQr" style="display:inline-block;background:#fff;padding:8px;border-radius:10px"></div>
+        <div class="muted" style="margin-top:8px">Se conecta solo en cuanto lo apruebes. El código caduca en 10 minutos.</div>
+        <button class="btn" id="cuentaCancelar" style="margin-top:10px">Cancelar</button>
+      </div>
+      <form id="cuentaForm" style="display:none;margin-top:12px" autocomplete="on">
+        <input type="email" id="cuentaEmail" placeholder="Email de tu cuenta de BSM" autocomplete="username" style="width:100%">
+        <input type="password" id="cuentaPass" placeholder="Contraseña" autocomplete="current-password" style="width:100%;margin-top:8px">
+        <div class="row" style="margin-top:10px"><button class="btn verde" type="submit">Entrar</button><button class="btn" type="button" id="cuentaFormNo">Cancelar</button></div>
+      </form>
+    </div>
     <div class="card">
       <div id="showsBar" style="display:none">
         <label class="f" for="showSel" style="margin-top:0">Show guardado en el reproductor</label>
@@ -478,6 +499,7 @@
           <button class="btn" id="showDup" title="Duplicar este show" aria-label="Duplicar este show"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button>
           <button class="btn" id="showImp" title="Importar un guion (por ejemplo, el que descargas de BSM)" aria-label="Importar guion"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></button>
           <input type="file" id="showFile" accept=".json,application/json" style="display:none">
+          <button class="btn" id="showSubir" title="Subir este show a BSM" aria-label="Subir este show a BSM" style="display:none"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 10a4 4 0 0 1-1 8H7z"/><path d="M12 12v6M9.5 14.5 12 12l2.5 2.5"/></svg></button>
           <button class="btn" id="showDel" title="Borrar este show" aria-label="Borrar este show"><svg class="i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>
         </div>
       </div>
@@ -971,9 +993,64 @@ async function loadShows() {
   } catch { showsData = null; $('showsBar').style.display = 'none'; return; }
   $('showsBar').style.display = '';
   const sel = $('showSel'); sel.innerHTML = '';
-  for (const x of showsData.shows) { const o = document.createElement('option'); o.value = x.id; o.textContent = x.name + ' · ' + x.songs + (x.songs === 1 ? ' canción' : ' canciones'); if (x.id === showsData.active) o.selected = true; sel.appendChild(o); }
+  for (const x of showsData.shows) { const o = document.createElement('option'); o.value = x.id; o.textContent = (x.bsm ? '☁ ' : '') + x.name + ' · ' + x.songs + (x.songs === 1 ? ' canción' : ' canciones'); if (x.id === showsData.active) o.selected = true; sel.appendChild(o); }
   $('showDel').disabled = showsData.shows.length <= 1;
+  pintarSubir();
 }
+
+// ====================== Cuenta AVI (BSM) — opcional ======================
+let cuenta = null;
+const CLOUD = '<svg class="i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 10a4 4 0 0 1-1 8H7z"/></svg>';
+async function cuentaCmd(body) {
+  try { const r = await (await fetch('/api/cuenta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })).json(); if (!r.ok) toast(r.error || 'No se pudo'); return r; }
+  catch { toast('Sin conexión con el reproductor'); return {}; }
+}
+function pintarSubir() {
+  const act = showsData && showsData.shows.find((x) => x.id === showsData.active);
+  $('showSubir').style.display = cuenta && cuenta.vinculada && act && !act.bsm ? '' : 'none';
+}
+function pintarCuenta(c) {
+  if (!c) return; cuenta = c;
+  $('cuentaCard').style.display = '';
+  const b = $('cuentaBotones'); b.innerHTML = '';
+  const boton = (txt, fn, cls) => { const x = document.createElement('button'); x.className = 'btn' + (cls ? ' ' + cls : ''); x.innerHTML = txt; x.onclick = fn; b.appendChild(x); };
+  $('cuentaCodigo').style.display = c.vinculando ? '' : 'none';
+  if (c.vinculada) {
+    const partes = ['Conectado como ' + c.email];
+    partes.push(c.tiempoReal ? 'al día en tiempo real' : c.conectado ? 'conectado' : 'sin internet: lo pendiente se envía al volver');
+    if (c.shows) partes.push(c.shows + (c.shows === 1 ? ' show de BSM' : ' shows de BSM'));
+    if (c.diferidos) partes.push('hay cambios de BSM esperando a que pares la música');
+    $('cuentaEstado').innerHTML = '<span style="color:' + (c.tiempoReal ? 'var(--verde)' : 'var(--ambar)') + '">●</span> ' + partes.join(' · ');
+    boton(CLOUD + 'Actualizar', () => cuentaCmd({ accion: 'sincronizar' }));
+    boton('Desvincular', () => { if (confirm('¿Desvincular este Maestro de tu cuenta? Los shows se quedan aquí como copia y dejan de actualizarse.')) cuentaCmd({ accion: 'desvincular' }); });
+  } else if (!c.vinculando) {
+    $('cuentaEstado').textContent = c.error || 'Tus shows y canciones de BSM, siempre al día, en los dos sentidos.';
+    boton(CLOUD + 'Vincular con código', async () => { $('cuentaForm').style.display = 'none'; const r = await cuentaCmd({ accion: 'codigo' }); if (r.enlace) qrCuenta(r.enlace); }, 'verde');
+    boton('Entrar con email', () => { $('cuentaForm').style.display = $('cuentaForm').style.display === 'none' ? '' : 'none'; });
+  } else $('cuentaEstado').textContent = 'Esperando la aprobación en BSM…';
+  if (c.codigo) $('cuentaCod').textContent = c.codigo.slice(0, 3) + ' ' + c.codigo.slice(3);
+  if (c.vinculada || c.vinculando) $('cuentaForm').style.display = 'none';
+  $('cuentaWeb').textContent = (c.web || 'https://bsm.avimusica.com').replace(/^https?:\/\//, '') + '/maestro';
+  pintarSubir();
+}
+function qrCuenta(url) {
+  const box = $('cuentaQr'); box.innerHTML = '';
+  const pinta = () => { try { const q = qrcode(0, 'M'); q.addData(url); q.make(); box.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0 }); box.style.display = 'inline-block'; } catch { box.style.display = 'none'; } };
+  if (window.qrcode) return pinta();
+  const sc = document.createElement('script'); sc.src = '/qrcode.js'; sc.onload = pinta; sc.onerror = () => { box.style.display = 'none'; }; document.head.appendChild(sc);
+}
+$('cuentaCancelar').onclick = () => cuentaCmd({ accion: 'cancelar' });
+$('cuentaFormNo').onclick = () => { $('cuentaForm').style.display = 'none'; };
+$('cuentaForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const r = await cuentaCmd({ accion: 'password', email: $('cuentaEmail').value, password: $('cuentaPass').value });
+  if (r.ok) { $('cuentaPass').value = ''; toast('Maestro vinculado'); }
+};
+$('showSubir').onclick = async () => {
+  if (!confirm('¿Subir este show a tu cuenta de BSM? A partir de ahora se mantendrá al día en los dos sentidos.')) return;
+  const r = await cuentaCmd({ accion: 'subir', id: showsData.active }); if (r.ok) { toast('Show subido a BSM'); loadShows(); }
+};
+fetch('/api/cuenta', { cache: 'no-store' }).then((r) => r.ok ? r.json() : null).then(pintarCuenta).catch(() => {});
 async function showsCmd(body) {
   try { const r = await (await fetch('/api/shows', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })).json(); if (!r.ok) toast(r.error || 'No se pudo'); }
   catch { toast('Sin conexión con el reproductor'); }
@@ -1090,6 +1167,7 @@ async function connect() {
   if (info.sse === false) return poll();
   const es = new EventSource('/events?role=control');
   es.addEventListener('state', (e) => onState(JSON.parse(e.data)));
+  es.addEventListener('cuenta', (e) => pintarCuenta(JSON.parse(e.data)));
   es.onerror = () => { $('conn').className = 'ko'; $('conn').textContent = 'Sin conexión'; };
 }
 async function poll() {
